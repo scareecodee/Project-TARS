@@ -1,4 +1,4 @@
-package com.example.projecttars.Student.Components
+package com.example.projecttars.Members.Components
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -10,13 +10,13 @@ import androidx.compose.material.icons.filled.Search
 import com.example.projecttars.R
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.projecttars.ui.theme.AccentBlue
 import com.example.projecttars.ui.theme.DarkSlate
 
-
 @Composable
-fun BottomNavBar() {
-    var selectedItem by remember { mutableIntStateOf(0) }
+fun BottomNavBar(navController: NavHostController) {
 
     val items = listOf(
         "Home" to Icons.Filled.Home,
@@ -24,26 +24,35 @@ fun BottomNavBar() {
         "Profile" to Icons.Filled.Person
     )
 
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
     NavigationBar(
         containerColor = DarkSlate,
         contentColor = Color.White
     ) {
-        items.forEachIndexed { index, (label, icon) ->
+        items.forEach { (label, icon) ->
             NavigationBarItem(
-                selected = selectedItem == index,
-                onClick = { selectedItem = index },
+                selected = currentRoute == label.lowercase(),
+                onClick = {
+                    navController.navigate(label.lowercase()) {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
                 icon = {
                     Icon(
                         imageVector = icon,
                         contentDescription = label,
-                        tint = if (selectedItem == index) AccentBlue else Color.White
+                        tint = if (currentRoute == label.lowercase()) AccentBlue else Color.White
                     )
                 },
                 label = {
                     Text(
                         text = label,
                         fontFamily = FontFamily(Font(R.font.poppinsregular)),
-                        color = if (selectedItem == index) AccentBlue else Color.White
+                        color = if (currentRoute == label.lowercase()) AccentBlue else Color.White
                     )
                 },
                 alwaysShowLabel = true,
@@ -54,4 +63,3 @@ fun BottomNavBar() {
         }
     }
 }
-

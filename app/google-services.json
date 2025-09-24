@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "776334097545",
+    "project_id": "project-tars-c8197",
+    "storage_bucket": "project-tars-c8197.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:776334097545:android:a2adec19ef06d7488d1a58",
+        "android_client_info": {
+          "package_name": "com.example.projecttars"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2hmrFIs8fXnrvJjrGVjbaeJGy3DEDuAA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
