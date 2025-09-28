@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -33,11 +34,13 @@ fun CompletedProjectsScreen(
     projects: List<Project>,
     onViewDetail: (Project) -> Unit,
     onBack: () -> Unit,
-
+    isAdmin: Boolean = false,
+    onAddClick: () -> Unit = {}
 ) {
     BackHandler {
-      onBack()
+        onBack()
     }
+
     TopAppBar(
         {
             Box(
@@ -48,38 +51,58 @@ fun CompletedProjectsScreen(
             )
         }
     )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .background(DarkGrayBlue)
             .fillMaxSize()
     ) {
+        // -------- Header Row --------
         Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-                .padding(start = 16.dp,top=10.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, top = 10.dp, end = 16.dp)
                 .systemBarsPadding()
         ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
                     tint = Color.White,
-                    modifier = Modifier.size(30.dp)
-                        . clickable(
-                        onClick = onBack
-                    )
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable { onBack() }
                 )
-            Text(
-                text = "Completed Projects",
-                fontFamily = FontFamily(Font(R.font.poppinsbold)),
-                color = AccentBlue,
-                fontSize = 25.sp,
-            )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = "Completed Projects",
+                    fontFamily = FontFamily(Font(R.font.poppinsbold)),
+                    color = AccentBlue,
+                    fontSize = 22.sp,
+                )
+            }
+
+            // Add button only for admin
+            if (isAdmin) {
+                IconButton(onClick = onAddClick) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Project",
+                        tint = Color.White,
+                        modifier = Modifier.size(25.dp)
+                    )
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // -------- List of Projects --------
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxSize()

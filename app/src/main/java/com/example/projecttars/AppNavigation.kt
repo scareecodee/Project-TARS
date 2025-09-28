@@ -1,12 +1,16 @@
 package com.example.projecttars
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import com.example.projecttars.Admin.AdminMainScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
 import com.example.projecttars.Admin.Login.AdminLogin
+import com.example.projecttars.Admin.Projects.Completed.AdminCompletedProjectDetail
+import com.example.projecttars.Admin.Projects.Completed.AdminCompletedProjectsScreen
+import com.example.projecttars.Admin.Projects.Ongoing.AdminOngoingProjectDetail
+import com.example.projecttars.Admin.Projects.Ongoing.AdminOngoingProjectScreen
+import com.example.projecttars.Admin.Resources.AdminResDetailScreen
 import com.example.projecttars.Common.RoleSelectionScreen
 import com.example.projecttars.DataModels.Achievement
 import com.example.projecttars.DataModels.CompletedProjectDetail
@@ -16,7 +20,7 @@ import com.example.projecttars.DataModels.NotificationItem
 import com.example.projecttars.DataModels.OngoingProjectDetail
 import com.example.projecttars.DataModels.Project
 import com.example.projecttars.DataModels.TarsMember
-import com.example.projecttars.Members.Acheivments.AchievementDetailScreen
+import com.example.projecttars.Members.Achievements.AchievementDetailScreen
 import com.example.projecttars.Members.MainScreen
 import com.example.projecttars.Members.Projects.Completed.CompletedProjectsScreen
 import com.example.projecttars.Members.Login.MembersLogin
@@ -30,30 +34,14 @@ import com.example.projecttars.Members.Resources.EquipmentDetailScreen
 import com.example.projecttars.Members.SocialMedia.SocialMediaScreen
 import com.example.projecttars.Members.TarsMembers.MemberDetailScreen
 import com.example.projecttars.Members.TarsMembers.TarsMembersScreen
+import defaultComposable
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppNavGraph(navController: NavHostController) {
     AnimatedNavHost(navController, startDestination = "role_selection") {
 
-
-        composable(
-            "role_selection",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }
-        ) {
+        defaultComposable("role_selection") {
             RoleSelectionScreen { selectedRole ->
                 when (selectedRole) {
                     "Members" -> navController.navigate("MembersLogin")
@@ -62,24 +50,7 @@ fun AppNavGraph(navController: NavHostController) {
             }
         }
 
-        // Members login
-        composable(
-            "MembersLogin",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }
-        ) {
+        defaultComposable("MembersLogin") {
             MembersLogin { username, password ->
                 if (username.isNotBlank() && password.isNotBlank()) {
                     navController.navigate("MembersMainScreen") {
@@ -90,30 +61,10 @@ fun AppNavGraph(navController: NavHostController) {
             }
         }
 
-
-        // Admin login
-        composable(
-            "AdminLogin",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }
-        ) {
+        defaultComposable("AdminLogin") {
             AdminLogin { username, password ->
-
                 if (username.isNotBlank() && password.isNotBlank()) {
-                    navController.navigate("AdminHome") {
-                        // Remove AdminLogin from backstack to prevent back press returning to login
+                    navController.navigate("AdminMainScreen") {
                         popUpTo("AdminLogin") { inclusive = true }
                         launchSingleTop = true
                     }
@@ -121,45 +72,9 @@ fun AppNavGraph(navController: NavHostController) {
             }
         }
 
+        defaultComposable("MembersMainScreen") { MainScreen(navController) }
 
-        // Members main screen
-        composable(
-            "MembersMainScreen",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }
-        ) {
-            MainScreen(navController)
-        }
-
-        // Completed projects
-        composable(
-            "CompletedProjectsScreen",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }) {
+        defaultComposable("CompletedProjectsScreen") {
             val projects = listOf(
                 Project(1, R.drawable.tarslogo, "Project 1", "Short description"),
                 Project(2, R.drawable.tarslogo, "Project 2", "Short description"),
@@ -172,23 +87,7 @@ fun AppNavGraph(navController: NavHostController) {
             )
         }
 
-        // Ongoing projects
-        composable(
-            "OngoingProjectsScreen",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }) {
+        defaultComposable("OngoingProjectsScreen") {
             val projects = listOf(
                 Project(1, R.drawable.tarslogo, "Project 1", "Short description"),
                 Project(2, R.drawable.tarslogo, "Project 2", "Short description"),
@@ -201,29 +100,12 @@ fun AppNavGraph(navController: NavHostController) {
             )
         }
 
-
-        // TarsMemberScreen
-        composable(
-            "TarsMemberScreen",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }) {
+        defaultComposable("TarsMemberScreen") {
             val members = listOf(
                 TarsMember("Sundram Kumar", "Member 1", "m", "B524066", "AppDev"),
                 TarsMember("Rahul Kumar", "Member 2", "f", "B524066", "WebDev"),
                 TarsMember("Sundram Kumar", "Member 1", "m", "B524066", "AI/ML"),
-                TarsMember("Rahul Kumar", "Member 2", "f", "B524066", "Management"),
+                TarsMember("Rahul Kumar", "Member 2", "f", "B524066", "Management")
             )
             TarsMembersScreen(
                 tarsMembers = members,
@@ -232,106 +114,34 @@ fun AppNavGraph(navController: NavHostController) {
             )
         }
 
-        //AchievementsScreen
-        composable(
-            "AchievementScreen",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }
-        ) {
+        defaultComposable("AchievementScreen") {
             val achievements = listOf(
-                Achievement(
-                    title = "Best Project Award",
-                    shortDescription = "Awarded for outstanding project contributions",
-                    imageResId = R.drawable.tarslogo
-                ),
-                Achievement(
-                    title = "Community Service",
-                    shortDescription = "Recognized for helping the community",
-                    imageResId = R.drawable.tarslogo
-                ),
-                Achievement(
-                    title = "Community Service",
-                    shortDescription = "Recognized for helping the community",
-                    imageResId = R.drawable.tarslogo
-                ),
-                Achievement(
-                    title = "Community Service",
-                    shortDescription = "Recognized for helping the community",
-                    imageResId = R.drawable.tarslogo
-                )
+                Achievement(title = "Best Project Award", shortDescription = "Awarded for outstanding project contributions", imageResId =  R.drawable.tarslogo),
+                Achievement(title = "Community Service", shortDescription = "Recognized for helping the community", imageResId =  R.drawable.tarslogo)
             )
             AchievementScreen(
                 achievements = achievements,
-                onViewDetail = {navController.navigate("AchievementDetailScreen") },
+                onViewDetail = { navController.navigate("AchievementDetailScreen") },
                 onBack = { navController.navigate("MembersMainScreen") },
             )
         }
 
+        defaultComposable("EquipmentDetailScreen") {
+            EquipmentDetailScreen(
+                equipment = EquipmentDetail(
+                    id = 1,
+                    name = "Equipment Name",
+                    imageResId = R.drawable.tarslogo,
+                    description = "Equipment Description",
+                    isAvailable = true,
+                    youtubeUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    documentationUrl = "https://example.com/documentation"
+                ),
+                onBackClick = { navController.navigate("MembersMainScreen")}
+            )
+        }
 
-        // EquipmentDetailScreen
-            composable(
-                "EquipmentDetailScreen",
-                enterTransition = { fadeIn(animationSpec = tween(500)) },
-                exitTransition = {
-                    slideOutHorizontally(
-                        targetOffsetX = { -300 },
-                        animationSpec = tween(500)
-                    )
-                },
-                popEnterTransition = {
-                    slideInHorizontally(
-                        initialOffsetX = { -300 },
-                        animationSpec = tween(500)
-                    )
-                },
-                popExitTransition = { fadeOut(tween(500)) }
-            ) {
-                EquipmentDetailScreen(
-                    equipment = EquipmentDetail(
-                        id = 1,
-                        name = "Equipment Name",
-                        imageResId = R.drawable.tarslogo,
-                        description = "Equipment Description",
-                        isAvailable = true,
-                        youtubeUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                        documentationUrl = "https://example.com/documentation"
-                    ),
-                    onBackClick = { navController.navigate("MembersMainScreen")},
-                )
-            }
-
-
-
-        //CompletedProjectDetailScreen
-        composable(
-            "CompletedProjectDetailScreen",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }
-        ) {
+        defaultComposable("CompletedProjectDetailScreen") {
             CompletedProjectDetailScreen(
                 project = CompletedProjectDetail(
                     name = "Project Name",
@@ -343,28 +153,14 @@ fun AppNavGraph(navController: NavHostController) {
                     youtubeUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
                     imageResId = R.drawable.tarslogo
                 ),
-                onBackClick = { navController.navigate("CompletedProjectsScreen") }
+                onBackClick = { navController.navigate("CompletedProjectsScreen") },
+                onEditClick = {},
+                isAdmin = false,
+                onDeleteClick = {}
             )
         }
 
-        //OngoingProjectDetailScreen
-        composable(
-            "OngoingProjectDetailScreen",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }
-        ) {
+        defaultComposable("OngoingProjectDetailScreen") {
             OngoingProjectDetailScreen(
                 project = OngoingProjectDetail(
                     name = "Project Name",
@@ -378,84 +174,29 @@ fun AppNavGraph(navController: NavHostController) {
                 ),
                 onBackClick = { navController.navigate("OngoingProjectsScreen") }
             )
-
         }
 
-        //OngoingProjectDetailScreen
-        composable(
-            "MemberDetailScreen",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }
-        ) {
-          MemberDetailScreen(
-              member = MemberDetail(
-                  name = "Member Name",
-                  imageResId = R.drawable.tarslogo,
-                  domain = "Domain",
-                  id = "ID",
-                  branch = "Branch",
-                  designation = "Designation",
-                  projects = listOf("Project 1", "Project 2"),
-                  linkedinUrl = "https://www.linkedin.com/in/sundramkumar/"
-              ),
-              onBackClick = { navController.navigate("TarsMemberScreen") }
-          )
-
-        }
-
-        //OngoingProjectDetailScreen
-        composable(
-            "SocialMediaScreen",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }
-        ) {
-            SocialMediaScreen(
-                onBackClick = { navController.navigate("MembersMainScreen") }
+        defaultComposable("MemberDetailScreen") {
+            MemberDetailScreen(
+                member = MemberDetail(
+                    name = "Member Name",
+                    imageResId = R.drawable.tarslogo,
+                    domain = "Domain",
+                    id = "ID",
+                    branch = "Branch",
+                    designation = "Designation",
+                    projects = listOf("Project 1", "Project 2"),
+                    linkedinUrl = "https://www.linkedin.com/in/sundramkumar/"
+                ),
+                onBackClick = { navController.navigate("TarsMemberScreen") }
             )
-
         }
 
-        composable(
-            "AchievementDetailScreen",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }
-        ) {
+        defaultComposable("SocialMediaScreen") {
+            SocialMediaScreen(onBackClick = { navController.navigate("MembersMainScreen") })
+        }
+
+        defaultComposable("AchievementDetailScreen") {
             AchievementDetailScreen(
                 achievement = Achievement(
                     title = "Achievement Title",
@@ -466,71 +207,107 @@ fun AppNavGraph(navController: NavHostController) {
             )
         }
 
-        composable(
-            "NotificationScreen",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }
-        ) {
+        defaultComposable("NotificationScreen") {
             NotificationScreen(
-                notifications =listOf(
-                    NotificationItem(
-                        title = "Notification Title",
-                        description = "Notification Description",
-                        date = "Notification Date"
-                    ),
-                    NotificationItem(
-                        title = "Notification Title",
-                        description = "Notification Description",
-                        date = "Notification Date"
-                    ),
-                    NotificationItem(
-                        title = "Notification Title",
-                        description = "Notification Description",
-                        date = "Notification Date"
-                    )
+                notifications = listOf(
+                    NotificationItem("Notification Title", "Notification Description", "Notification Date"),
+                    NotificationItem("Notification Title", "Notification Description", "Notification Date"),
+                    NotificationItem("Notification Title", "Notification Description", "Notification Date")
                 ),
                 onBackClick = { navController.popBackStack() }
             )
-
         }
 
-        composable(
-            "MessageAdminScreen",
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -300 },
-                    animationSpec = tween(500)
-                )
-            },
-            popExitTransition = { fadeOut(tween(500)) }
-        ) {
+        defaultComposable("MessageAdminScreen") {
             MessageAdminScreen(
                 onBackClick = { navController.popBackStack() },
-                onSendClick = { title, description ->
-                    // Handle send message logic here
-                }
+                onSendClick = { title, description -> /* Handle send message */ }
             )
+        }
 
+        defaultComposable("AdminMainScreen") {
+            AdminMainScreen(navController)
         }
+
+        defaultComposable("AdminResDetailScreen") {
+            AdminResDetailScreen(
+                equipment = EquipmentDetail(
+                    id = 1,
+                    name = "Equipment Name",
+                    imageResId = R.drawable.tarslogo,
+                    description = "Equipment Description",
+                    isAvailable = true,
+                    youtubeUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    documentationUrl = "https://example.com/documentation"
+                ),
+                onBackClick = { navController.navigate("AdminMainScreen") },
+                onDeleteClick = {},
+                onEditClick = {}
+            )
         }
+
+        defaultComposable("AdminCompletedProjectScreen") {
+            AdminCompletedProjectsScreen(
+                projects = listOf(
+                    Project(1, R.drawable.tarslogo, "Project 1", "Short description"),
+                    Project(2, R.drawable.tarslogo, "Project 2", "Short description"),
+                    Project(1, R.drawable.tarslogo, "Project 1", "Short description"),
+                    Project(2, R.drawable.tarslogo, "Project 2", "Short description"),
+                ),
+                onViewDetail = { navController.navigate("AdminCompletedProjectDetail") },
+                onBack = { navController.navigate("AdminMainScreen") },
+                onAddProject = {}
+            )
+        }
+
+        defaultComposable("AdminCompletedProjectDetail") {
+            AdminCompletedProjectDetail(
+                project = CompletedProjectDetail(
+                    name = "Project Name",
+                    developers = listOf("Developer 1", "Developer 2"),
+                    guidedBy = listOf("Guide 1", "Guide 2"),
+                    equipmentUsed = listOf("Equipment 1", "Equipment 2"),
+                    techStack = listOf("Tech 1", "Tech 2"),
+                    problemSolved = "Problem Solved Here",
+                    youtubeUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    imageResId = R.drawable.tarslogo
+                ),
+                onBackClick = { navController.navigate("AdminCompletedProjectScreen") },
+                onDeleteClick = {},
+                onEditClick = {}
+            )
+        }
+
+        defaultComposable("AdminOngoingProjectScreen") {
+            AdminOngoingProjectScreen(
+                projects = listOf(
+                    Project(1, R.drawable.tarslogo, "Project 1", "Short description"),
+                    Project(2, R.drawable.tarslogo, "Project 2", "Short description"),
+                ),
+                onViewDetail = { navController.navigate("AdminOngoingProjectDetail") },
+                onBack = { navController.navigate("AdminMainScreen") },
+                onAddProjectClick = {}
+            )
+        }
+
+        defaultComposable("AdminOngoingProjectDetail") {
+            AdminOngoingProjectDetail(
+                project = OngoingProjectDetail(
+                    name = "Project Name",
+                    imageResId = R.drawable.tarslogo,
+                    youtubeUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    developers = listOf("Developer 1", "Developer 2"),
+                    guidedBy = listOf("Guide 1", "Guide 2"),
+                    equipmentUsed = listOf("Equipment 1", "Equipment 2"),
+                    techStack = listOf("Tech 1", "Tech 2"),
+                    problemSolved = "Problem Solved Here"
+                ),
+                onDeleteClick = {},
+                onEditClick = {},
+                onBackClick = { navController.navigate("AdminOngoingProjectScreen") },
+            )
+        }
+
     }
+}
 

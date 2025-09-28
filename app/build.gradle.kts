@@ -61,7 +61,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("io.coil-kt:coil-compose:2.6.0")
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.32.0")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")
+
+
+
+
 
 
 

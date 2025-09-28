@@ -1,4 +1,4 @@
-package com.example.projecttars.Members.Acheivments
+package com.example.projecttars.Members.Achievements
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

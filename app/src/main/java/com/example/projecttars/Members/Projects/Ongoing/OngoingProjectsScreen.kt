@@ -23,26 +23,20 @@ import com.example.projecttars.Members.UiElements.OngoingProjectCard
 import com.example.projecttars.ui.theme.AccentOrange
 import com.example.projecttars.ui.theme.DarkGrayBlue
 import com.example.projecttars.ui.theme.DarkSlate
+import androidx.compose.material.icons.filled.Add
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OngoingProjectsScreen(
     projects: List<Project>,
     onViewDetail: (Project) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    isAdmin: Boolean = false,
+    onAddProjectClick: (() -> Unit)? = null
 ) {
     BackHandler { onBack() }
-
-    TopAppBar(
-        {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .windowInsetsTopHeight(WindowInsets.statusBars)
-                    .background(DarkSlate)
-            )
-        }
-    )
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -50,29 +44,43 @@ fun OngoingProjectsScreen(
             .background(DarkGrayBlue)
             .fillMaxSize()
     ) {
+        // Top bar
         Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, top = 10.dp)
+                .padding(horizontal = 16.dp, vertical = 12.dp)
                 .systemBarsPadding()
         ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
-                tint = Color.White,
-                modifier = Modifier
-                    .size(30.dp)
-                    .clickable(onClick = onBack)
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable(onClick = onBack)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = "Ongoing Projects",
+                    fontFamily = FontFamily(Font(R.font.poppinsbold)),
+                    color = AccentOrange,
+                    fontSize = 25.sp,
+                )
+            }
 
-            Text(
-                text = "Ongoing Projects",
-                fontFamily = FontFamily(Font(R.font.poppinsbold)),
-                color = AccentOrange,
-                fontSize = 25.sp,
-            )
+            if (isAdmin && onAddProjectClick != null) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Project",
+                    tint = AccentOrange,
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable { onAddProjectClick() }
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))

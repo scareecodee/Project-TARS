@@ -25,45 +25,57 @@ import com.example.projecttars.ui.theme.*
 
 @Composable
 fun OngoingProjectDetailScreen(
-    project: OngoingProjectDetail, // Use same data model
-    onBackClick: () -> Unit
+    project: OngoingProjectDetail,
+    onBackClick: () -> Unit,
+    isAdmin: Boolean = false,
+    onEditClick: (() -> Unit)? = null,
+    onDeleteClick: (() -> Unit)? = null
 ) {
     val uriHandler = LocalUriHandler.current
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(DarkGrayBlue)
             .systemBarsPadding()
     ) {
-        // ----- Fixed Top Section -----
-        Column(modifier = Modifier.fillMaxWidth()) {
-            // Top Row: Back button + Heading
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Top row with back button, title, and optional delete button
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 16.dp)
             ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = TextPrimary
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = "Project Details",
+                        color = TextPrimary,
+                        fontSize = 28.sp,
+                        fontFamily = FontFamily(Font(R.font.poppinsregular))
                     )
                 }
 
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Text(
-                    text = "Project Details",
-                    color = TextPrimary,
-                    fontSize = 28.sp,
-                    fontFamily = FontFamily(Font(R.font.poppinsregular))
-                )
+                // Admin delete button at top-right
+                if (isAdmin && onDeleteClick != null) {
+                    IconButton(onClick = onDeleteClick) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete Project",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
 
-            // Project Image
+            // Project image
             Card(
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
@@ -82,7 +94,7 @@ fun OngoingProjectDetailScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // YouTube Button
+            // YouTube button
             project.youtubeUrl?.let { url ->
                 Button(
                     onClick = { uriHandler.openUri(url) },
@@ -103,33 +115,48 @@ fun OngoingProjectDetailScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            // Scrollable details
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 80.dp)
+            ) {
+                item {
+                    Text(
+                        text = project.name,
+                        color = TextPrimary,
+                        fontSize = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.poppinsbold)),
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                }
+
+                item { CardSection(Icons.Default.Person, "Developers", project.developers.joinToString(", ")) }
+                item { CardSection(Icons.Default.School, "Guided By", project.guidedBy.joinToString(", ")) }
+                item { CardSection(Icons.Default.Build, "Equipment Used", project.equipmentUsed.joinToString(", ")) }
+                item { CardSection(Icons.Default.Code, "Tech Stack", project.techStack.joinToString(", ")) }
+                item { CardSection(Icons.Default.HelpOutline, "Problem Solved", project.problemSolved) }
+
+                item { Spacer(modifier = Modifier.height(16.dp)) }
+            }
         }
 
-        // ----- Scrollable Details Section -----
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 16.dp)
-        ) {
-            item {
-                Text(
-                    text = project.name,
-                    color = TextPrimary,
-                    fontSize = 24.sp,
-                    fontFamily = FontFamily(Font(R.font.poppinsbold)),
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
+        // Admin edit button as FAB
+        if (isAdmin && onEditClick != null) {
+            FloatingActionButton(
+                onClick = onEditClick,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp),
+                containerColor = AccentBlue,
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Icon(Icons.Default.Edit, contentDescription = "Edit Project", tint = Color.White)
             }
-
-            item { CardSection(Icons.Default.Person, "Developers", project.developers.joinToString(", "), TextPrimary, DarkSlate) }
-            item { CardSection(Icons.Default.School, "Guided By", project.guidedBy.joinToString(", "), TextPrimary, DarkSlate) }
-            item { CardSection(Icons.Default.Build, "Equipment Used", project.equipmentUsed.joinToString(", "), TextPrimary, DarkSlate) }
-            item { CardSection(Icons.Default.Code, "Tech Stack", project.techStack.joinToString(", "), TextPrimary, DarkSlate) }
-            item { CardSection(Icons.Default.HelpOutline, "Problem Solved", project.problemSolved, TextPrimary, DarkSlate) }
-
-            item { Spacer(modifier = Modifier.height(16.dp)) }
         }
     }
 }
+
 
 @Composable
 fun CardSection(
