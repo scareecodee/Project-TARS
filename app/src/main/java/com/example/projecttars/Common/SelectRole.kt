@@ -72,16 +72,16 @@ fun RoleSelectionScreen(
                 RoleCard(
                     icon = Icons.Default.Security,
                     role = "Admin",
-                    isSelected = selectedRole == "ADMIN",
-                    onClick = { selectedRole = "ADMIN" }
+                    isSelected = selectedRole == "Admin",
+                    onClick = { selectedRole = "Admin" }
                 )
             }
             Box(modifier = Modifier.weight(1f)) {
                 RoleCard(
                     icon = Icons.Default.Groups,
                     role = "Members",
-                    isSelected = selectedRole == "STUDENT",
-                    onClick = { selectedRole = "STUDENT" }
+                    isSelected = selectedRole == "Members",
+                    onClick = { selectedRole = "Members" }
                 )
             }
         }

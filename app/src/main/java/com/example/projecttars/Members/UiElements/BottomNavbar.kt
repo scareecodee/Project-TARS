@@ -1,4 +1,4 @@
-package com.example.projecttars.Members.Components
+package com.example.projecttars.Members.UiElements
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -10,22 +10,23 @@ import androidx.compose.material.icons.filled.Search
 import com.example.projecttars.R
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.projecttars.ui.theme.AccentBlue
 import com.example.projecttars.ui.theme.DarkSlate
 
+
+
+
+
 @Composable
-fun BottomNavBar(navController: NavHostController) {
-
+fun BottomNavBar(
+    selectedScreen: String,
+    onItemSelected: (String) -> Unit
+) {
     val items = listOf(
-        "Home" to Icons.Filled.Home,
-        "Resources" to Icons.Filled.Search,
-        "Profile" to Icons.Filled.Person
+        "home" to Icons.Filled.Home,
+        "resources" to Icons.Filled.Search,
+        "profile" to Icons.Filled.Person
     )
-
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar(
         containerColor = DarkSlate,
@@ -33,26 +34,20 @@ fun BottomNavBar(navController: NavHostController) {
     ) {
         items.forEach { (label, icon) ->
             NavigationBarItem(
-                selected = currentRoute == label.lowercase(),
-                onClick = {
-                    navController.navigate(label.lowercase()) {
-                        popUpTo(navController.graph.startDestinationId) { saveState = true }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
+                selected = selectedScreen == label,
+                onClick = { onItemSelected(label) },
                 icon = {
                     Icon(
                         imageVector = icon,
                         contentDescription = label,
-                        tint = if (currentRoute == label.lowercase()) AccentBlue else Color.White
+                        tint = if (selectedScreen == label) AccentBlue else Color.White
                     )
                 },
                 label = {
                     Text(
-                        text = label,
+                        text = label.replaceFirstChar { it.uppercase() },
                         fontFamily = FontFamily(Font(R.font.poppinsregular)),
-                        color = if (currentRoute == label.lowercase()) AccentBlue else Color.White
+                        color = if (selectedScreen == label) AccentBlue else Color.White
                     )
                 },
                 alwaysShowLabel = true,

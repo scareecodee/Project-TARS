@@ -1,4 +1,4 @@
-package com.example.projecttars.Members.Components
+package com.example.projecttars.Members.UiElements
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
