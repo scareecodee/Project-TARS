@@ -3,14 +3,21 @@ package com.example.projecttars
 import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import com.example.projecttars.Admin.Achievements.AdminAchievementDetail
+import com.example.projecttars.Admin.Achievements.AdminAchievementsScreen
 import com.example.projecttars.Admin.AdminMainScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.example.projecttars.Admin.Login.AdminLogin
+import com.example.projecttars.Admin.Profile.AdminNotificationScreen
+import com.example.projecttars.Admin.Profile.SendNotificationScreen
 import com.example.projecttars.Admin.Projects.Completed.AdminCompletedProjectDetail
 import com.example.projecttars.Admin.Projects.Completed.AdminCompletedProjectsScreen
 import com.example.projecttars.Admin.Projects.Ongoing.AdminOngoingProjectDetail
 import com.example.projecttars.Admin.Projects.Ongoing.AdminOngoingProjectScreen
 import com.example.projecttars.Admin.Resources.AdminResDetailScreen
+import com.example.projecttars.Admin.SocialMedia.AdminSocialMedia
+import com.example.projecttars.Admin.TarsMembers.AdminTarsMemberDetail
+import com.example.projecttars.Admin.TarsMembers.AdminTarsMemberScreen
 import com.example.projecttars.Common.RoleSelectionScreen
 import com.example.projecttars.DataModels.Achievement
 import com.example.projecttars.DataModels.CompletedProjectDetail
@@ -307,6 +314,85 @@ fun AppNavGraph(navController: NavHostController) {
                 onBackClick = { navController.navigate("AdminOngoingProjectScreen") },
             )
         }
+
+        defaultComposable("AdminAchievementsScreen") {
+           AdminAchievementsScreen(
+               achievements = listOf(
+                   Achievement(title = "Achievement Title", shortDescription = "Achievement Description", imageResId = R.drawable.tarslogo),
+                   Achievement(title = "Achievement Title", shortDescription = "Achievement Description", imageResId = R.drawable.tarslogo)
+               ),
+               onViewDetail = { navController.navigate("AdminAchievementDetail") },
+               onBack = { navController.navigate("AdminMainScreen") },
+               onAddAchievement = {}
+           )
+        }
+
+        defaultComposable("AdminAchievementDetail") {
+            AdminAchievementDetail(
+                achievement = Achievement(title = "Achievement Title", shortDescription = "Achievement Description", imageResId = R.drawable.tarslogo),
+                onBackClick = { navController.navigate("AdminAchievementsScreen") },
+                onDeleteClick = {},
+                onEditClick = {}
+            )
+        }
+
+        defaultComposable("AdminTarsMemberScreen") {
+            AdminTarsMemberScreen(
+                tarsMembers= listOf(
+                    TarsMember("Sundram Kumar", "Member 1", "m", "B524066", "AppDev"),
+                    TarsMember("Rahul Kumar", "Member 2", "f", "B524066", "WebDev"),
+                ),
+                onViewDetail = { navController.navigate("AdminTarsMemberDetailScreen") },
+                onBack = { navController.navigate("AdminMainScreen") },
+                onAddMember = {}
+            )
+        }
+
+        defaultComposable("AdminTarsMemberDetailScreen") {
+            AdminTarsMemberDetail(
+                member = MemberDetail(
+                    name = "Member Name",
+                    imageResId = R.drawable.tarslogo,
+                    domain = "Domain",
+                    id = "ID",
+                    branch = "Branch",
+                    designation = "Designation",
+                    projects = listOf("Project 1", "Project 2"),
+                    linkedinUrl = "https://www.linkedin.com/in/sundramkumar/"
+                ),
+                onBackClick = { navController.navigate("AdminTarsMemberScreen") },
+                onDeleteClick = {},
+                onEditClick = {}
+            )
+        }
+
+        defaultComposable("AdminSocialMediaScreen") {
+            AdminSocialMedia(
+                onBackClick = { navController.navigate("AdminMainScreen") },
+                onEditClick = {}
+            )
+        }
+
+        defaultComposable("AdminNotificationScreen") {
+            AdminNotificationScreen(
+                notifications = listOf(
+                    NotificationItem("Notification Title", "Notification Description", "Notification Date"),
+                    NotificationItem("Notification Title", "Notification Description", "Notification Date"),
+                    NotificationItem("Notification Title", "Notification Description", "Notification Date")
+                ),
+                onBackClick = { navController.navigate("AdminMainScreen") },
+                onSendNotificationClick = {navController.navigate("SendNotificationScreen")}
+            )
+        }
+
+        defaultComposable("SendNotificationScreen") {
+            SendNotificationScreen(
+                onBackClick = { navController.navigate("AdminMainScreen") },
+                onSendClick = { title, description -> /* Handle send notification */ }
+            )
+        }
+
+
 
     }
 }

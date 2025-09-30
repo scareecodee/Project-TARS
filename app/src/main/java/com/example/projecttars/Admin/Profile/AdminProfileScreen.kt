@@ -1,6 +1,4 @@
 package com.example.projecttars.Admin.Profile
-
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -33,7 +31,8 @@ fun AdminProfileScreen(
     onEditProfileClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
     onNotificationsViewClick: () -> Unit = {},
-    onViewMessageClick: () -> Unit = {}
+    onViewMessageClick: () -> Unit = {},
+    onAboutSocietyClick: () -> Unit = {}
 ) {
     val gradientColorsHeader = listOf(DarkGrayBlue,AccentBlue.copy(alpha = 0.5f), DarkSlate)
     val gradientColorsCard = listOf(DarkGrayBlue, DarkSlate)
@@ -98,6 +97,7 @@ fun AdminProfileScreen(
             ActionCardMinimal("Edit Profile", Icons.Default.Edit, gradientColorsCard, onEditProfileClick)
             ActionCardMinimal("View Notifications", Icons.Default.Notifications, gradientColorsCard, onNotificationsViewClick)
             ActionCardMinimal("View Messages", Icons.Default.Email, gradientColorsCard, onViewMessageClick)
+            ActionCardMinimal("About Society", Icons.Default.Info, listOf(DarkSlate, DarkGrayBlue), onAboutSocietyClick)
             ActionCardMinimal("Logout", Icons.Default.ExitToApp, listOf(DarkSlate, DarkGrayBlue), onLogoutClick)
         }
     }

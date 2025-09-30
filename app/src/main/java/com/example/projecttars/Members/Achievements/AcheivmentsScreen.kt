@@ -26,6 +26,8 @@ import com.example.projecttars.ui.theme.AccentBlue
 import com.example.projecttars.ui.theme.DarkGrayBlue
 import com.example.projecttars.ui.theme.DarkSlate
 
+import androidx.compose.material.icons.filled.Add
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,11 +35,11 @@ fun AchievementScreen(
     achievements: List<Achievement>,
     onViewDetail: (Achievement) -> Unit,
     onBack: () -> Unit,
+    isAdmin: Boolean = false,
+    onAddAchievement: () -> Unit = {}
+) {
+    BackHandler { onBack() }
 
-    ) {
-    BackHandler {
-        onBack()
-    }
     TopAppBar(
         {
             Box(
@@ -48,37 +50,54 @@ fun AchievementScreen(
             )
         }
     )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .background(DarkGrayBlue)
             .fillMaxSize()
     ) {
+
         Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-                .padding(start = 16.dp,top=10.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 10.dp)
                 .systemBarsPadding()
         ) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "Back",
                 tint = Color.White,
-                modifier = Modifier.size(30.dp)
-                    . clickable(
-                        onClick = onBack
-                    )
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable(onClick = onBack)
             )
+
+            Spacer(modifier = Modifier.width(10.dp))
+
             Text(
                 text = "Achievements",
                 fontFamily = FontFamily(Font(R.font.poppinsbold)),
                 color = AccentBlue,
                 fontSize = 25.sp,
+                modifier = Modifier.weight(1f)
             )
+
+
+            if (isAdmin) {
+                IconButton(onClick = onAddAchievement) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Achievement",
+                        tint = AccentBlue
+                    )
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -95,4 +114,3 @@ fun AchievementScreen(
         }
     }
 }
-

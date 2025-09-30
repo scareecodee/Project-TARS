@@ -75,7 +75,7 @@ fun OngoingProjectsScreen(
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Project",
-                    tint = AccentOrange,
+                    tint =Color.White,
                     modifier = Modifier
                         .size(30.dp)
                         .clickable { onAddProjectClick() }

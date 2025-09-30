@@ -30,7 +30,7 @@ fun MessageAdminScreen(onBackClick: () -> Unit, onSendClick: (title: String, des
             .systemBarsPadding()
             .padding(horizontal = 16.dp)
     ) {
-        // Header
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -99,7 +99,7 @@ fun MessageAdminScreen(onBackClick: () -> Unit, onSendClick: (title: String, des
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Send button
+
         Button(
             onClick = { onSendClick(title.text, description.text) },
             colors = ButtonDefaults.buttonColors(containerColor = AccentBlue),

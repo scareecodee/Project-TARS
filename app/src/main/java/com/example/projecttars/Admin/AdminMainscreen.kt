@@ -85,9 +85,9 @@ fun AdminMainScreen(navController: NavHostController) {
                 "home" ->AdminHome(
                     onProjectCompletedClick = { navController.navigate("AdminCompletedProjectScreen") },
                     onProjectOngoingClick = { navController.navigate("AdminOngoingProjectScreen") },
-                    onAchievementsClick = { /*TODO*/ },
-                    onMembersClick = { /*TODO*/ },
-                    onSocialHandleClick = { /*TODO*/ }
+                    onAchievementsClick = { navController.navigate("AdminAchievementsScreen") },
+                    onMembersClick = { navController.navigate("AdminTarsMemberScreen") },
+                    onSocialHandleClick = { navController.navigate("AdminSocialMediaScreen") }
                 )
                 "resources" -> AdminResScreen(
                     components = components,
@@ -99,7 +99,7 @@ fun AdminMainScreen(navController: NavHostController) {
                 "profile" -> AdminProfileScreen (
                     onEditProfileClick = { /*TODO*/ },
                     onLogoutClick = { /*TODO*/ },
-                    onNotificationsViewClick = { /*TODO*/ },
+                    onNotificationsViewClick = { navController.navigate("AdminNotificationScreen") },
                     onViewMessageClick = { /*TODO*/ }
                 )
             }

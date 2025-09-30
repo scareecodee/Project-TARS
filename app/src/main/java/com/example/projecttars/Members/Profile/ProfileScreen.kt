@@ -32,7 +32,8 @@ fun ProfileScreen(
     onEditProfileClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
     onNotificationsClick: () -> Unit = {},
-    onMessageAdminClick: () -> Unit = {}
+    onMessageAdminClick: () -> Unit = {},
+    onAboutSocietyClick: () -> Unit = {}
 ) {
     val gradientColorsHeader = listOf(DarkGrayBlue,AccentBlue.copy(alpha = 0.5f), DarkSlate)
     val gradientColorsCard = listOf(DarkGrayBlue, DarkSlate)
@@ -97,6 +98,7 @@ fun ProfileScreen(
             ActionCardMinimal("Edit Profile", Icons.Default.Edit, gradientColorsCard, onEditProfileClick)
             ActionCardMinimal("Notifications", Icons.Default.Notifications, gradientColorsCard, onNotificationsClick)
             ActionCardMinimal("Message Admin", Icons.Default.Email, gradientColorsCard, onMessageAdminClick)
+            ActionCardMinimal("About Society", Icons.Default.Info, listOf(DarkSlate, DarkGrayBlue), onAboutSocietyClick)
             ActionCardMinimal("Logout", Icons.Default.ExitToApp, listOf(DarkSlate, DarkGrayBlue), onLogoutClick)
         }
     }
