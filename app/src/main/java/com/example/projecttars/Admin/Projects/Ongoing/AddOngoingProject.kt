@@ -16,18 +16,22 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import coil.compose.AsyncImage
-import com.example.projecttars.DataModels.CompletedProjectDetail
 import com.example.projecttars.ui.theme.*
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.layout.ContentScale
+import com.example.projecttars.DataModels.OngoingProjectDetail
 import com.example.projecttars.R
+import com.example.projecttars.ViewModels.NavigationData.OngoingProjectNavVM
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddOngoingProjectScreen(
+    ongoingProjectNavVM: OngoingProjectNavVM,
+    heading:String,
     onBackClick: () -> Unit,
-    onSaveClick: (CompletedProjectDetail) -> Unit
+    onSaveClick: (OngoingProjectDetail) -> Unit,
 ) {
+    val selectedOngoingProject by ongoingProjectNavVM.selectedOngoingProject.collectAsState()
     var name by remember { mutableStateOf("") }
     var imageUrl by remember { mutableStateOf("") }
     var developers by remember { mutableStateOf("") }
@@ -40,12 +44,25 @@ fun AddOngoingProjectScreen(
     val scrollState = rememberScrollState()
     val poppinsFont = FontFamily(Font(R.font.poppinsregular))
 
+    LaunchedEffect(selectedOngoingProject) {
+        selectedOngoingProject?.let {
+            name = it.name
+            imageUrl = it.imageUrl
+            developers = it.developers.joinToString(", ")
+            guidedBy = it.guidedBy.joinToString(", ")
+            equipmentUsed = it.equipmentUsed.joinToString(", ")
+            techStack = it.techStack.joinToString(", ")
+            problemSolved = it.problemSolved
+            youtubeUrl = it.youtubeUrl ?: ""
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        "Add Ongoing Project",
+                        heading,
                         fontSize = 20.sp,
                         color = TextPrimary,
                         fontFamily = poppinsFont
@@ -67,7 +84,8 @@ fun AddOngoingProjectScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    val project = CompletedProjectDetail(
+                    val project = OngoingProjectDetail(
+                        id = selectedOngoingProject?.id ?: "",
                         name = name,
                         imageUrl = imageUrl,
                         developers = developers.split(",").map { it.trim() }.filter { it.isNotEmpty() },
@@ -110,7 +128,7 @@ fun AddOngoingProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Image URL
+
             OutlinedTextField(
                 value = imageUrl,
                 onValueChange = { imageUrl = it },
@@ -126,7 +144,7 @@ fun AddOngoingProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Preview Image
+
             if (imageUrl.isNotBlank()) {
                 Card(
                     shape = RoundedCornerShape(16.dp),
@@ -145,7 +163,7 @@ fun AddOngoingProjectScreen(
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
-            // Developers
+
             OutlinedTextField(
                 value = developers,
                 onValueChange = { developers = it },
@@ -161,7 +179,7 @@ fun AddOngoingProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Guided By
+
             OutlinedTextField(
                 value = guidedBy,
                 onValueChange = { guidedBy = it },
@@ -177,7 +195,7 @@ fun AddOngoingProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Equipment Used
+
             OutlinedTextField(
                 value = equipmentUsed,
                 onValueChange = { equipmentUsed = it },
@@ -193,7 +211,7 @@ fun AddOngoingProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Tech Stack
+
             OutlinedTextField(
                 value = techStack,
                 onValueChange = { techStack = it },
@@ -209,7 +227,7 @@ fun AddOngoingProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Problem Solved
+
             OutlinedTextField(
                 value = problemSolved,
                 onValueChange = { problemSolved = it },
@@ -226,7 +244,7 @@ fun AddOngoingProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // YouTube URL
+
             OutlinedTextField(
                 value = youtubeUrl,
                 onValueChange = { youtubeUrl = it },

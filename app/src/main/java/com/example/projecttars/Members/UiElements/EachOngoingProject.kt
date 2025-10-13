@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.projecttars.R
 import com.example.projecttars.ui.theme.DarkSlate
 import com.example.projecttars.ui.theme.TextPrimary
@@ -27,7 +28,7 @@ import com.example.projecttars.ui.theme.DarkCharcoal
 
 @Composable
 fun OngoingProjectCard(
-    imageResId: Int,
+    imageUrl:String,
     title: String,
     shortDescription: String,
     onViewDetail: () -> Unit
@@ -51,19 +52,28 @@ fun OngoingProjectCard(
         ) {
             Column {
                 // Project image
-                Image(
-                    painter = painterResource(id = imageResId),
-                    contentDescription = "Ongoing Project Image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                )
-
+                if(imageUrl.isNotEmpty()){
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = "Ongoing Project Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                    )
+                }else{
+                    Image(
+                        painter = painterResource(id = R.drawable.tarslogo),
+                        contentDescription = "Ongoing Project Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                    )
+                }
                 Spacer(modifier = Modifier.height(8.dp))
-
-
                 Text(
                     text = title,
                     fontSize = 18.sp,

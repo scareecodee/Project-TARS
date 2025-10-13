@@ -8,3 +8,8 @@ data class SocialMediaHandle(
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
     val color: Color
 )
+
+data class SocialMediaLinks(
+    val name: String,
+    val url: String,
+)

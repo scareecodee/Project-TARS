@@ -18,12 +18,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.example.projecttars.DataModels.CompletedProjectDetail
 import com.example.projecttars.R
 
 
 @Composable
 fun CompletedProjectCard(
-    imageResId: Int,
+    imageUrl: String,
     title: String,
     shortDescription: String,
     onViewDetail: () -> Unit
@@ -56,15 +58,28 @@ fun CompletedProjectCard(
                 .padding(16.dp)
         ) {
             Column {
-                Image(
-                    painter = painterResource(id = imageResId),
-                    contentDescription = "Project Image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                )
+                if(imageUrl.isEmpty()){
+                    Image(
+                        painter = painterResource(id =R.drawable.tarslogo),
+                        contentDescription = "Project Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                    )
+                }else{
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(16.dp)),
+                    )
+                }
+
 
                 Spacer(modifier = Modifier.height(12.dp))
 

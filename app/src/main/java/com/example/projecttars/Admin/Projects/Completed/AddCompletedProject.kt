@@ -21,21 +21,37 @@ import com.example.projecttars.ui.theme.*
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.layout.ContentScale
 import com.example.projecttars.R
+import com.example.projecttars.ViewModels.NavigationData.CompletedProjectNavVM
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCompletedProjectScreen(
+    heading: String,
     onBackClick: () -> Unit,
-    onSaveClick: (CompletedProjectDetail) -> Unit
+    onSaveClick: (CompletedProjectDetail) -> Unit,
+    completedProjectNavVM: CompletedProjectNavVM
 ) {
+    val selectedCompletedProject by completedProjectNavVM.selectedCompletedProject.collectAsState()
     var name by remember { mutableStateOf("") }
     var imageUrl by remember { mutableStateOf("") }
-    var developers by remember { mutableStateOf("") } // comma separated
-    var guidedBy by remember { mutableStateOf("") } // comma separated
-    var equipmentUsed by remember { mutableStateOf("") } // comma separated
-    var techStack by remember { mutableStateOf("") } // comma separated
+    var developers by remember { mutableStateOf("") }
+    var guidedBy by remember { mutableStateOf("") }
+    var equipmentUsed by remember { mutableStateOf("") }
+    var techStack by remember { mutableStateOf("") }
     var problemSolved by remember { mutableStateOf("") }
     var youtubeUrl by remember { mutableStateOf("") }
+    LaunchedEffect(selectedCompletedProject) {
+      selectedCompletedProject?.let {project->
+          name=project.name
+          imageUrl=project.imageUrl
+          developers=project.developers.joinToString(",")
+          guidedBy=project.guidedBy.joinToString(",")
+          equipmentUsed=project.equipmentUsed.joinToString(",")
+          techStack=project.techStack.joinToString(",")
+          problemSolved=project.problemSolved
+          youtubeUrl=project.youtubeUrl?:""
+      }
+    }
 
     val scrollState = rememberScrollState()
     val poppinsFont = FontFamily(Font(R.font.poppinsregular))
@@ -45,7 +61,7 @@ fun AddCompletedProjectScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Add Completed Project",
+                        heading,
                         fontSize = 20.sp,
                         color = TextPrimary,
                         fontFamily = poppinsFont
@@ -68,6 +84,7 @@ fun AddCompletedProjectScreen(
             FloatingActionButton(
                 onClick = {
                     val project = CompletedProjectDetail(
+                        id=selectedCompletedProject?.id?:"",
                         name = name,
                         imageUrl = imageUrl,
                         developers = developers.split(",").map { it.trim() }.filter { it.isNotEmpty() },
@@ -94,7 +111,7 @@ fun AddCompletedProjectScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
-            // Project Name
+
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -110,7 +127,7 @@ fun AddCompletedProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Image URL
+
             OutlinedTextField(
                 value = imageUrl,
                 onValueChange = { imageUrl = it },
@@ -126,7 +143,7 @@ fun AddCompletedProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Preview Image
+
             if (imageUrl.isNotBlank()) {
                 Card(
                     shape = RoundedCornerShape(16.dp),
@@ -145,7 +162,7 @@ fun AddCompletedProjectScreen(
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
-            // Developers
+
             OutlinedTextField(
                 value = developers,
                 onValueChange = { developers = it },
@@ -161,7 +178,7 @@ fun AddCompletedProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Guided By
+
             OutlinedTextField(
                 value = guidedBy,
                 onValueChange = { guidedBy = it },
@@ -177,7 +194,7 @@ fun AddCompletedProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Equipment Used
+
             OutlinedTextField(
                 value = equipmentUsed,
                 onValueChange = { equipmentUsed = it },
@@ -193,7 +210,7 @@ fun AddCompletedProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Tech Stack
+
             OutlinedTextField(
                 value = techStack,
                 onValueChange = { techStack = it },
@@ -209,7 +226,7 @@ fun AddCompletedProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Problem Solved
+
             OutlinedTextField(
                 value = problemSolved,
                 onValueChange = { problemSolved = it },
@@ -226,7 +243,7 @@ fun AddCompletedProjectScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // YouTube URL
+
             OutlinedTextField(
                 value = youtubeUrl,
                 onValueChange = { youtubeUrl = it },

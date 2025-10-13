@@ -18,27 +18,38 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.projecttars.DataModels.Achievement
 import com.example.projecttars.R
+import com.example.projecttars.ViewModels.NavigationData.AchievementsNavVM
 import com.example.projecttars.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddAchievementScreen(
+    heading:String,
     onBackClick: () -> Unit,
-    onSaveClick: (Achievement) -> Unit
+    onSaveClick: (Achievement) -> Unit,
+    achievementsNavVM: AchievementsNavVM
 ) {
+    val selectedAchievement = achievementsNavVM.selectedAchievement.collectAsState().value
     val poppins = FontFamily(Font(R.font.poppinsregular))
     val scrollState = rememberScrollState()
 
     var imageUrl by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("") }
     var shortDescription by remember { mutableStateOf("") }
+    LaunchedEffect(selectedAchievement) {
+        selectedAchievement?.let {
+            imageUrl = it.imageUrl
+            title = it.title
+            shortDescription = it.shortDescription
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        "Add Achievement",
+                        heading,
                         color = TextPrimary,
                         fontFamily = poppins,
                         fontSize = 20.sp

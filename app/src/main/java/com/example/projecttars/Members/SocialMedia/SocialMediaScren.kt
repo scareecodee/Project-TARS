@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontFamily
 import com.example.projecttars.ui.theme.*
 import com.example.projecttars.R
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.ui.draw.clip
 import com.example.projecttars.DataModels.SocialMediaHandle
 
 
@@ -83,6 +84,7 @@ fun SocialMediaScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .clip(RoundedCornerShape(20.dp))
                             .clickable { uriHandler.openUri(handle.url) },
                         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                     ) {
@@ -133,7 +135,7 @@ fun SocialMediaScreen(
             }
         }
 
-        // 🔹 FAB visible only for Admin
+
         if (isAdmin) {
             FloatingActionButton(
                 onClick = { onEditClick?.invoke() },

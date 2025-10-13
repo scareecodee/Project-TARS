@@ -18,24 +18,29 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.projecttars.R
-import com.example.projecttars.DataModels.Project
 import com.example.projecttars.Members.UiElements.OngoingProjectCard
 import com.example.projecttars.ui.theme.AccentOrange
 import com.example.projecttars.ui.theme.DarkGrayBlue
-import com.example.projecttars.ui.theme.DarkSlate
 import androidx.compose.material.icons.filled.Add
-
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import com.example.projecttars.DataModels.OngoingProjectDetail
+import com.example.projecttars.ViewModels.Firebase.OngoingProjectVM
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OngoingProjectsScreen(
-    projects: List<Project>,
-    onViewDetail: (Project) -> Unit,
+    onViewDetail: (OngoingProjectDetail) -> Unit,
     onBack: () -> Unit,
     isAdmin: Boolean = false,
-    onAddProjectClick: (() -> Unit)? = null
+    onAddProjectClick: (() -> Unit)? = null,
+    ongoingProjectVM: OngoingProjectVM
 ) {
+    val ongoingProjects=ongoingProjectVM.completedProjects.collectAsState().value
+    LaunchedEffect(Unit) {
+        ongoingProjectVM.observeOngoingProjects()
+    }
     BackHandler { onBack() }
 
     Column(
@@ -44,7 +49,7 @@ fun OngoingProjectsScreen(
             .background(DarkGrayBlue)
             .fillMaxSize()
     ) {
-        // Top bar
+
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -82,20 +87,32 @@ fun OngoingProjectsScreen(
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(16.dp))
-
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(projects) { project ->
-                OngoingProjectCard(
-                    imageResId = project.imageResId,
-                    title = project.title,
-                    shortDescription = project.shortDescription,
-                    onViewDetail = { onViewDetail(project) }
+        if (ongoingProjects.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No Project Found",
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily(Font(R.font.poppinsregular))
                 )
+            }
+        }else{
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(ongoingProjects) { ongoingProject ->
+                    OngoingProjectCard(
+                        imageUrl = ongoingProject.imageUrl,
+                        title = ongoingProject.name,
+                        shortDescription =  ongoingProject.problemSolved,
+                        onViewDetail = { onViewDetail( ongoingProject ) }
+                    )
+                }
             }
         }
     }

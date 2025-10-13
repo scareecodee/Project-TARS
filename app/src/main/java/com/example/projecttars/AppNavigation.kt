@@ -26,12 +26,8 @@ import com.example.projecttars.Admin.SocialMedia.AdminSocialMedia
 import com.example.projecttars.Admin.TarsMembers.AdminTarsMemberDetail
 import com.example.projecttars.Admin.TarsMembers.AdminTarsMemberScreen
 import com.example.projecttars.Common.RoleSelectionScreen
-import com.example.projecttars.DataModels.Achievement
-import com.example.projecttars.DataModels.CompletedProjectDetail
-import com.example.projecttars.DataModels.MemberDetail
 import com.example.projecttars.DataModels.NotificationItem
 import com.example.projecttars.DataModels.OngoingProjectDetail
-import com.example.projecttars.DataModels.Project
 import com.example.projecttars.Members.Achievements.AchievementDetailScreen
 import com.example.projecttars.Members.MainScreen
 import com.example.projecttars.Members.Projects.Completed.CompletedProjectsScreen
@@ -50,23 +46,34 @@ import com.example.projecttars.ViewModels.NavigationData.ResourcesNavVM
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.projecttars.Admin.Achievements.EditAchievement
+import com.example.projecttars.Admin.Projects.Completed.EditCompletedProjectScreen
+import com.example.projecttars.Admin.Projects.Ongoing.EditOngoingProject
 import com.example.projecttars.Admin.Resources.EditResource
 import com.example.projecttars.Admin.TarsMembers.EditMember
 import com.example.projecttars.Members.Resources.EquipmentDetailScreen
 import com.example.projecttars.ViewModels.Firebase.AchievementsVM
+import com.example.projecttars.ViewModels.Firebase.CompletedProjectVM
 import com.example.projecttars.ViewModels.Firebase.MembersVM
+import com.example.projecttars.ViewModels.Firebase.OngoingProjectVM
 import com.example.projecttars.ViewModels.NavigationData.AchievementsNavVM
+import com.example.projecttars.ViewModels.NavigationData.CompletedProjectNavVM
 import com.example.projecttars.ViewModels.NavigationData.MemberNavVM
+import com.example.projecttars.ViewModels.NavigationData.OngoingProjectNavVM
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppNavGraph(navController: NavHostController) {
     val resourcesVM: ResourcesVM = viewModel()
-    val membersVM: MembersVM=viewModel()
-    val resourcesNavVM: ResourcesNavVM=viewModel()
-    val membersNavVM: MemberNavVM=viewModel()
-    val achievementsVM: AchievementsVM=viewModel()
-    val achievementsNavVM: AchievementsNavVM =viewModel()
+    val membersVM: MembersVM = viewModel()
+    val resourcesNavVM: ResourcesNavVM = viewModel()
+    val membersNavVM: MemberNavVM = viewModel()
+    val achievementsVM: AchievementsVM = viewModel()
+    val achievementsNavVM: AchievementsNavVM = viewModel()
+    val completedProjectVM: CompletedProjectVM = viewModel()
+    val completedProjectNavVM: CompletedProjectNavVM = viewModel()
+    val ongoingProjectVM: OngoingProjectVM = viewModel()
+    val ongoingProjectNavVM: OngoingProjectNavVM = viewModel()
     NavHost(navController, startDestination = "role_selection") {
 
         composable("role_selection") {
@@ -100,31 +107,33 @@ fun AppNavGraph(navController: NavHostController) {
             }
         }
 
-        defaultComposable("MembersMainScreen") { MainScreen(navController,resourcesVM,resourcesNavVM) }
+        defaultComposable("MembersMainScreen") {
+            MainScreen(
+                navController,
+                resourcesVM,
+                resourcesNavVM
+            )
+        }
 
         defaultComposable("CompletedProjectsScreen") {
-            val projects = listOf(
-                Project(1, R.drawable.tarslogo, "Project 1", "Short description"),
-                Project(2, R.drawable.tarslogo, "Project 2", "Short description"),
-                Project(3, R.drawable.tarslogo, "Project 3", "Short description")
-            )
             CompletedProjectsScreen(
-                projects = projects,
-                onViewDetail = { navController.navigate("CompletedProjectDetailScreen") },
+                completedProjectsVM = completedProjectVM,
+                onViewDetail = {
+                    completedProjectNavVM.selectCompletedProject(it)
+                    navController.navigate("CompletedProjectDetailScreen")
+                },
                 onBack = { navController.navigate("MembersMainScreen") },
             )
         }
 
         defaultComposable("OngoingProjectsScreen") {
-            val projects = listOf(
-                Project(1, R.drawable.tarslogo, "Project 1", "Short description"),
-                Project(2, R.drawable.tarslogo, "Project 2", "Short description"),
-                Project(3, R.drawable.tarslogo, "Project 3", "Short description")
-            )
             OngoingProjectsScreen(
-                projects = projects,
-                onViewDetail = { navController.navigate("OngoingProjectDetailScreen") },
+                onViewDetail = {
+                    ongoingProjectNavVM.selectOngoingProject(it)
+                    navController.navigate("OngoingProjectDetailScreen")
+                },
                 onBack = { navController.navigate("MembersMainScreen") },
+                ongoingProjectVM = ongoingProjectVM
             )
         }
 
@@ -133,7 +142,7 @@ fun AppNavGraph(navController: NavHostController) {
                 onViewDetail = {
                     membersNavVM.selectMember(it)
                     navController.navigate("MemberDetailScreen")
-                               },
+                },
                 onBack = { navController.navigate("MembersMainScreen") },
                 membersVM = membersVM
             )
@@ -144,67 +153,58 @@ fun AppNavGraph(navController: NavHostController) {
                 onViewDetail = {
                     achievementsNavVM.selectAchievement(it)
                     navController.navigate("AchievementDetailScreen")
-                               },
+                },
                 onBack = { navController.navigate("MembersMainScreen") },
                 achievementsVM = achievementsVM
             )
         }
 
         defaultComposable("EquipmentDetailScreen") {
-            val equipment=resourcesNavVM.selectedEquipment.collectAsState().value
-          equipment?.let {
-              EquipmentDetailScreen(
-                  equipment = it,
-                  onBackClick = { navController.popBackStack() },
-                  onDeleteClick = {},
-                  onEditClick = {}
-              )
-          }
+            val equipment = resourcesNavVM.selectedEquipment.collectAsState().value
+            equipment?.let {
+                EquipmentDetailScreen(
+                    equipment = it,
+                    onBackClick = { navController.popBackStack() },
+                    onDeleteClick = {},
+                    onEditClick = {}
+                )
+            }
         }
 
         defaultComposable("CompletedProjectDetailScreen") {
-            CompletedProjectDetailScreen(
-                project = CompletedProjectDetail(
-                    name = "Project Name",
-                    developers = listOf("Developer 1", "Developer 2"),
-                    guidedBy = listOf("Guided By 1", "Guided By 2"),
-                    equipmentUsed = listOf("Equipment 1", "Equipment 2"),
-                    techStack = listOf("Tech 1", "Tech 2"),
-                    problemSolved = "Problem Solved",
-                    youtubeUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                    imageUrl = "https://res.cloudinary.com/dnewwgoua/image/upload/v1758696099/STK-20230722-WA0326_bajags.webp"
-                ),
-                onBackClick = { navController.navigate("CompletedProjectsScreen") },
-                onEditClick = {},
-                isAdmin = false,
-                onDeleteClick = {}
-            )
+            val completedProject =
+                completedProjectNavVM.selectedCompletedProject.collectAsState().value
+            completedProject?.let {
+                CompletedProjectDetailScreen(
+                    project = it,
+                    onBackClick = { navController.navigate("CompletedProjectsScreen") },
+                    onDeleteClick = {},
+                    onEditClick = {},
+                    isAdmin = false
+                )
+            }
         }
 
         defaultComposable("OngoingProjectDetailScreen") {
-            OngoingProjectDetailScreen(
-                project = OngoingProjectDetail(
-                    name = "Project Name",
-                    imageUrl = "https://res.cloudinary.com/dnewwgoua/image/upload/v1758696099/STK-20230722-WA0326_bajags.webp",
-                    youtubeUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                    developers = listOf("Developer 1", "Developer 2"),
-                    guidedBy = listOf("Guide 1", "Guide 2"),
-                    equipmentUsed = listOf("Equipment 1", "Equipment 2"),
-                    techStack = listOf("Tech 1", "Tech 2"),
-                    problemSolved = "Problem Solved Here"
-                ),
-                onBackClick = { navController.navigate("OngoingProjectsScreen") }
-            )
+            val ongoingProject = ongoingProjectNavVM.selectedOngoingProject.collectAsState().value
+            ongoingProject?.let {
+                OngoingProjectDetailScreen(
+                    project = it,
+                    onBackClick = { navController.popBackStack() },
+                    isAdmin = false
+                )
+            }
         }
 
         defaultComposable("MemberDetailScreen") {
-            val member =membersNavVM.selectedMember.collectAsState().value
+            val member = membersNavVM.selectedMember.collectAsState().value
             member?.let {
                 MemberDetailScreen(
                     member = member,
                     onBackClick = {
                         membersNavVM.clearSelection()
-                        navController.navigate("TarsMemberScreen") }
+                        navController.navigate("TarsMemberScreen")
+                    }
                 )
             }
         }
@@ -214,7 +214,7 @@ fun AppNavGraph(navController: NavHostController) {
         }
 
         defaultComposable("AchievementDetailScreen") {
-            val achievement=achievementsNavVM.selectedAchievement.collectAsState().value
+            val achievement = achievementsNavVM.selectedAchievement.collectAsState().value
             achievement?.let {
                 AchievementDetailScreen(
                     achievement = achievement,
@@ -226,9 +226,21 @@ fun AppNavGraph(navController: NavHostController) {
         defaultComposable("NotificationScreen") {
             NotificationScreen(
                 notifications = listOf(
-                    NotificationItem("Notification Title", "Notification Description", "Notification Date"),
-                    NotificationItem("Notification Title", "Notification Description", "Notification Date"),
-                    NotificationItem("Notification Title", "Notification Description", "Notification Date")
+                    NotificationItem(
+                        "Notification Title",
+                        "Notification Description",
+                        "Notification Date"
+                    ),
+                    NotificationItem(
+                        "Notification Title",
+                        "Notification Description",
+                        "Notification Date"
+                    ),
+                    NotificationItem(
+                        "Notification Title",
+                        "Notification Description",
+                        "Notification Date"
+                    )
                 ),
                 onBackClick = { navController.popBackStack() }
             )
@@ -242,7 +254,7 @@ fun AppNavGraph(navController: NavHostController) {
         }
 
         defaultComposable("AdminMainScreen") {
-            AdminMainScreen(navController, resourcesVM,resourcesNavVM)
+            AdminMainScreen(navController, resourcesVM, resourcesNavVM)
         }
 
         defaultComposable("AdminResDetailScreen") {
@@ -257,13 +269,20 @@ fun AppNavGraph(navController: NavHostController) {
                     onDeleteClick = {
                         resourcesVM.deleteEquipment(
                             equipmentId = it.id,
-                            onResult = {result->
-                                if(result){
-                                    Toast.makeText(navController.context,"Item Deleted", Toast.LENGTH_SHORT).show()
+                            onResult = { result ->
+                                if (result) {
+                                    Toast.makeText(
+                                        navController.context,
+                                        "Item Deleted",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                     navController.navigate("AdminMainScreen")
-                                }
-                                else{
-                                    Toast.makeText(navController.context,"Failed", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(
+                                        navController.context,
+                                        "Failed",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         )
@@ -284,10 +303,18 @@ fun AppNavGraph(navController: NavHostController) {
                         if (result) {
                             resourcesNavVM.selectEquipment(updatedEquipment)
 
-                            Toast.makeText(navController.context, "Updated successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                navController.context,
+                                "Updated successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             navController.popBackStack()
                         } else {
-                            Toast.makeText(navController.context, "Update failed", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                navController.context,
+                                "Update failed",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 },
@@ -299,17 +326,26 @@ fun AppNavGraph(navController: NavHostController) {
             EditMember(
                 onBackClick = { navController.popBackStack() },
                 onSaveClick = { updatedMember ->
-                    membersVM.updateMember(updatedMember,
+                    membersVM.updateMember(
+                        updatedMember,
                         onResult = { result ->
                             if (result) {
                                 membersNavVM.selectMember(updatedMember)
 
-                                Toast.makeText(navController.context, "Updated successfully", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    navController.context,
+                                    "Updated successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 navController.popBackStack()
                             } else {
-                                Toast.makeText(navController.context, "Update failed", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    navController.context,
+                                    "Update failed",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
-                    }
+                        }
                     )
                 },
                 memberNavVM = membersNavVM
@@ -319,102 +355,180 @@ fun AppNavGraph(navController: NavHostController) {
 
         defaultComposable("AdminCompletedProjectScreen") {
             AdminCompletedProjectsScreen(
-                projects = listOf(
-                    Project(1, R.drawable.tarslogo, "Project 1", "Short description"),
-                    Project(2, R.drawable.tarslogo, "Project 2", "Short description"),
-                    Project(1, R.drawable.tarslogo, "Project 1", "Short description"),
-                    Project(2, R.drawable.tarslogo, "Project 2", "Short description"),
-                ),
-                onViewDetail = { navController.navigate("AdminCompletedProjectDetail") },
+                onViewDetail = {
+                    completedProjectNavVM.selectCompletedProject(it)
+                    navController.navigate("AdminCompletedProjectDetail")
+                },
                 onBack = { navController.navigate("AdminMainScreen") },
-                onAddProject = {navController.navigate("AddCompletedProject")}
+                onAddProject = {
+                    completedProjectNavVM.clearSelection()
+                    navController.navigate("AddCompletedProject")
+                },
+                completedProjectVM = completedProjectVM
             )
         }
 
         defaultComposable("AdminCompletedProjectDetail") {
-            AdminCompletedProjectDetail(
-                project = CompletedProjectDetail(
-                    name = "Project Name",
-                    developers = listOf("Developer 1", "Developer 2"),
-                    guidedBy = listOf("Guide 1", "Guide 2"),
-                    equipmentUsed = listOf("Equipment 1", "Equipment 2"),
-                    techStack = listOf("Tech 1", "Tech 2"),
-                    problemSolved = "Problem Solved Here",
-                    youtubeUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                   imageUrl = "https://res.cloudinary.com/dnewwgoua/image/upload/v1758696099/STK-20230722-WA0326_bajags.webp"
-                ),
-                onBackClick = { navController.navigate("AdminCompletedProjectScreen") },
-                onDeleteClick = {},
-                onEditClick = {navController.navigate("AddCompletedProject")}
-            )
+            val completedProject =
+                completedProjectNavVM.selectedCompletedProject.collectAsState().value
+            completedProject?.let {
+                AdminCompletedProjectDetail(
+                    project = it,
+                    onBackClick = { navController.navigate("AdminCompletedProjectScreen") },
+                    onDeleteClick = {
+                        completedProjectVM.deleteCompletedProject(
+                            id = it.id,
+                            onResult = { result ->
+                                if (result) {
+                                    Toast.makeText(
+                                        navController.context,
+                                        "Item Deleted",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    navController.navigate("AdminCompletedProjectScreen")
+                                } else {
+                                    Toast.makeText(
+                                        navController.context,
+                                        "Failed",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        )
+                    },
+                    onEditClick = { navController.navigate("EditCompletedProject") }
+                )
+            }
         }
 
         defaultComposable("AdminOngoingProjectScreen") {
             AdminOngoingProjectScreen(
-                projects = listOf(
-                    Project(1, R.drawable.tarslogo, "Project 1", "Short description"),
-                    Project(2, R.drawable.tarslogo, "Project 2", "Short description"),
-                ),
-                onViewDetail = { navController.navigate("AdminOngoingProjectDetail") },
+                onViewDetail = {
+                    ongoingProjectNavVM.selectOngoingProject(it)
+                    navController.navigate("AdminOngoingProjectDetail")
+                },
                 onBack = { navController.navigate("AdminMainScreen") },
-                onAddProjectClick = {navController.navigate("AddOngoingProject")}
+                onAddProjectClick = {
+                    ongoingProjectNavVM.clearSelection()
+                    navController.navigate("AddOngoingProject")
+                },
+                ongoingProjectVM = ongoingProjectVM
             )
         }
 
         defaultComposable("AdminOngoingProjectDetail") {
-            AdminOngoingProjectDetail(
-                project = OngoingProjectDetail(
-                    name = "Project Name",
-                    imageUrl = "",
-                    youtubeUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                    developers = listOf("Developer 1", "Developer 2"),
-                    guidedBy = listOf("Guide 1", "Guide 2"),
-                    equipmentUsed = listOf("Equipment 1", "Equipment 2"),
-                    techStack = listOf("Tech 1", "Tech 2"),
-                    problemSolved = "Problem Solved Here"
-                ),
-                onDeleteClick = {},
-                onEditClick = {navController.navigate("AddOngoingProject")},
-                onBackClick = { navController.navigate("AdminOngoingProjectScreen") },
+            val ongoingProject = ongoingProjectNavVM.selectedOngoingProject.collectAsState().value
+            ongoingProject?.let {
+                AdminOngoingProjectDetail(
+                    project = it,
+                    onBackClick = { navController.popBackStack() },
+                    onDeleteClick = {
+                        ongoingProjectVM.deleteOngoingProject(
+                            id = it.id,
+                            onResult = { result ->
+                                if (result) {
+                                    Toast.makeText(
+                                        navController.context,
+                                        "Item Deleted",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    navController.popBackStack()
+                                } else {
+                                    Toast.makeText(
+                                        navController.context,
+                                        "Failed",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+
+                            }
+                        )
+                    },
+                    onEditClick = {
+                        navController.navigate("EditOngoingProject")
+                    }
+                )
+            }
+
+        }
+
+        defaultComposable("EditOngoingProject") {
+            EditOngoingProject(
+                onBackClick = { navController.popBackStack() },
+                onSaveClick = { updated ->
+                    ongoingProjectVM.updateOngoingProject(
+                        id = updated.id,
+                        updated = updated,
+                        onResult = { result ->
+                            if (result) {
+                                Toast.makeText(navController.context, "success", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.popBackStack()
+                            } else {
+                                Toast.makeText(navController.context, "failed", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    )
+                },
+                ongoingProjectNavVM = ongoingProjectNavVM
             )
         }
 
         defaultComposable("AdminAchievementsScreen") {
 
-           AdminAchievementsScreen(
-               onViewDetail = {
-                   achievementsNavVM.selectAchievement(it)
-                   navController.navigate("AdminAchievementDetail") },
-               onBack = { navController.navigate("AdminMainScreen") },
-               onAddAchievement = {navController.navigate("AddAchievementScreen")},
-               achievementsVM = achievementsVM
-           )
+            AdminAchievementsScreen(
+                onViewDetail = {
+                    achievementsNavVM.selectAchievement(it)
+                    navController.navigate("AdminAchievementDetail")
+                },
+                onBack = { navController.navigate("AdminMainScreen") },
+                onAddAchievement = {
+                    achievementsNavVM.clearSelection()
+                    navController.navigate("AddAchievementScreen") },
+                achievementsVM = achievementsVM
+            )
         }
 
         defaultComposable("AdminAchievementDetail") {
-            val achievement=achievementsNavVM.selectedAchievement.collectAsState().value
+            val achievement = achievementsNavVM.selectedAchievement.collectAsState().value
             achievement?.let {
                 AdminAchievementDetail(
-                    achievement =achievement ,
+                    achievement = achievement,
                     onBackClick = { navController.navigate("AdminAchievementsScreen") },
-                    onDeleteClick = {},
-                    onEditClick = {navController.navigate("AddAchievementScreen")}
+                    onDeleteClick = {
+                        achievementsVM.deleteAchievement(
+                            id=it.id,
+                            onResult = { result ->
+                                if (result) {
+                                    Toast.makeText(navController.context, "success", Toast.LENGTH_SHORT)
+                                        .show()
+                                    navController.popBackStack()
+                                } else {
+                                    Toast.makeText(navController.context, "failed", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            }
+                        )
+                    },
+                    onEditClick = { navController.navigate("EditAchievement") }
                 )
             }
-         
+
         }
 
         defaultComposable("AdminTarsMemberScreen") {
             AdminTarsMemberScreen(
                 onViewDetail = {
-                        membersNavVM.selectMember(it)
+                    membersNavVM.selectMember(it)
                     navController.navigate("AdminTarsMemberDetailScreen")
-                               },
+                },
                 onBack = { navController.navigate("AdminMainScreen") },
                 onAddMember = {
                     membersNavVM.clearSelection()
-                    navController.navigate("AddTarsMemberScreen")},
-                membersVM=membersVM
+                    navController.navigate("AddTarsMemberScreen")
+                },
+                membersVM = membersVM
             )
         }
 
@@ -427,16 +541,24 @@ fun AppNavGraph(navController: NavHostController) {
                     onDeleteClick = {
                         membersVM.deleteMember(
                             memberId = it.id,
-                            onResult = { result->
-                                if(result){
-                                    Toast.makeText(navController.context,"Member Deleted", Toast.LENGTH_SHORT).show()
-                                }else{
-                                    Toast.makeText(navController.context,"Failed", Toast.LENGTH_SHORT).show()
+                            onResult = { result ->
+                                if (result) {
+                                    Toast.makeText(
+                                        navController.context,
+                                        "Member Deleted",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    Toast.makeText(
+                                        navController.context,
+                                        "Failed",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         )
                     },
-                    onEditClick = {navController.navigate("EditMember")}
+                    onEditClick = { navController.navigate("EditMember") }
                 )
             }
         }
@@ -451,12 +573,24 @@ fun AppNavGraph(navController: NavHostController) {
         defaultComposable("AdminNotificationScreen") {
             AdminNotificationScreen(
                 notifications = listOf(
-                    NotificationItem("Notification Title", "Notification Description", "Notification Date"),
-                    NotificationItem("Notification Title", "Notification Description", "Notification Date"),
-                    NotificationItem("Notification Title", "Notification Description", "Notification Date")
+                    NotificationItem(
+                        "Notification Title",
+                        "Notification Description",
+                        "Notification Date"
+                    ),
+                    NotificationItem(
+                        "Notification Title",
+                        "Notification Description",
+                        "Notification Date"
+                    ),
+                    NotificationItem(
+                        "Notification Title",
+                        "Notification Description",
+                        "Notification Date"
+                    )
                 ),
                 onBackClick = { navController.navigate("AdminMainScreen") },
-                onSendNotificationClick = {navController.navigate("SendNotificationScreen")}
+                onSendNotificationClick = { navController.navigate("SendNotificationScreen") }
             )
         }
 
@@ -469,7 +603,7 @@ fun AppNavGraph(navController: NavHostController) {
 
         defaultComposable("AddEquipment") {
             AddEquipment(
-                resourcesNavVM=resourcesNavVM,
+                resourcesNavVM = resourcesNavVM,
                 onBackClick = {
                     navController.popBackStack()
                 },
@@ -477,11 +611,19 @@ fun AppNavGraph(navController: NavHostController) {
                     resourcesVM.saveEquipment(it) { success ->
                         if (success) {
                             Log.d("AddEquipment", "Equipment Added")
-                            Toast.makeText(navController.context, "Equipment Added", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                navController.context,
+                                "Equipment Added",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             navController.popBackStack()
                         } else {
                             Log.d("AddEquipment", "Failed to Add Equipment")
-                            Toast.makeText(navController.context, "Failed to Add Equipment", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                navController.context,
+                                "Failed to Add Equipment",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
@@ -495,8 +637,46 @@ fun AppNavGraph(navController: NavHostController) {
                     navController.popBackStack()
                 },
                 onSaveClick = {
-
-                }
+                    completedProjectVM.addCompletedProject(
+                        completedProject = it,
+                        onResult = { result ->
+                            if (result) {
+                                Toast.makeText(navController.context, "success", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.popBackStack()
+                            } else {
+                                Toast.makeText(navController.context, "failed", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    )
+                },
+                heading = "Add Project",
+                completedProjectNavVM = completedProjectNavVM
+            )
+        }
+        defaultComposable("EditCompletedProject") {
+            EditCompletedProjectScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onSaveClick = { updated ->
+                    completedProjectVM.updateCompletedProject(
+                        id = updated.id,
+                        updated = updated,
+                        onResult = { result ->
+                            if (result) {
+                                Toast.makeText(navController.context, "success", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.popBackStack()
+                            } else {
+                                Toast.makeText(navController.context, "failed", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    )
+                },
+                completedProjectNavVM = completedProjectNavVM
             )
         }
         defaultComposable("AddOngoingProject") {
@@ -504,7 +684,24 @@ fun AppNavGraph(navController: NavHostController) {
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onSaveClick = {}
+                onSaveClick = {
+                    ongoingProjectVM.addOngoingProject(
+                        ongoingProject = it,
+                        onResult = { result ->
+                            if (result) {
+                                Toast.makeText(navController.context, "success", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.popBackStack()
+                            } else {
+                                Toast.makeText(navController.context, "failed", Toast.LENGTH_SHORT)
+                                    .show()
+
+                            }
+                        }
+                    )
+                },
+                ongoingProjectNavVM = ongoingProjectNavVM,
+                heading = "Add Ongoing Project"
             )
         }
 
@@ -519,11 +716,13 @@ fun AppNavGraph(navController: NavHostController) {
                     membersVM.addMember(
                         member = it,
                         onResult = { result ->
-                            if(result){
-                                Toast.makeText(navController.context,"success",Toast.LENGTH_SHORT).show()
+                            if (result) {
+                                Toast.makeText(navController.context, "success", Toast.LENGTH_SHORT)
+                                    .show()
                                 navController.popBackStack()
                             } else {
-                                Toast.makeText(navController.context,"failed",Toast.LENGTH_SHORT).show()
+                                Toast.makeText(navController.context, "failed", Toast.LENGTH_SHORT)
+                                    .show()
                             }
                         }
                     )
@@ -532,30 +731,54 @@ fun AppNavGraph(navController: NavHostController) {
         }
 
         defaultComposable("AddAchievementScreen") {
-          AddAchievementScreen(
-              onBackClick = {
-                  navController.popBackStack()
-              },
-              onSaveClick = {
-                  achievementsVM.addAchievement(
-                      achievement = it,
-                      onResult = { result ->
-                          if(result){
-                              Toast.makeText(navController.context,"success",Toast.LENGTH_SHORT).show()
-                              navController.popBackStack()
-                          } else {
-                              Toast.makeText(navController.context,"failed",Toast.LENGTH_SHORT).show()
-                          }
-                      }
-                  )
-              }
-          )
+            AddAchievementScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onSaveClick = {
+                    achievementsVM.addAchievement(
+                        achievement = it,
+                        onResult = { result ->
+                            if (result) {
+                                Toast.makeText(navController.context, "success", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.popBackStack()
+                            } else {
+                                Toast.makeText(navController.context, "failed", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    )
+                },
+                heading = "Add Achievement",
+                achievementsNavVM = achievementsNavVM
+            )
         }
+        defaultComposable("EditAchievement") {
+            EditAchievement(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onSaveClick = {
+                    achievementsVM.updateAchievement(
+                        id = it.id,
+                        updated = it,
+                        onResult = { result ->
+                            if (result) {
+                                Toast.makeText(navController.context, "success", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.popBackStack()
+                            }
+                            else{
+                                Toast.makeText(navController.context, "failed", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    )
+                },
+                        achievementsNavVM = achievementsNavVM
+            )
 
-
-
-
-
+        }
     }
 }
 

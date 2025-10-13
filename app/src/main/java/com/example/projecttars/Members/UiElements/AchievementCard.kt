@@ -52,15 +52,30 @@ fun AchievementCard(
         ) {
             Column {
 
-               AsyncImage(
-                   model = imageUrl,
-                   contentDescription = null,
-                   contentScale = ContentScale.Crop,
-                   modifier = Modifier
-                       .fillMaxWidth()
-                       .height(200.dp)
-                       .clip(RoundedCornerShape(8.dp)),
-               )
+                    if(imageUrl.isEmpty()){
+                        Image(
+                            painter = painterResource(id =R.drawable.tarslogo),
+                            contentDescription = "Project Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(180.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                        )
+                    }
+                else
+                    {
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(180.dp)
+                                .clip(RoundedCornerShape(16.dp)),
+                        )
+                    }
+
 
                 Spacer(modifier = Modifier.height(8.dp))
 

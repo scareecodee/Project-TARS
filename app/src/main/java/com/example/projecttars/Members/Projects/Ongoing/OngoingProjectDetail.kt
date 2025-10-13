@@ -29,7 +29,7 @@ fun OngoingProjectDetailScreen(
     project: OngoingProjectDetail,
     onBackClick: () -> Unit,
     isAdmin: Boolean = false,
-    onEditClick: (() -> Unit)? = null,
+    onEditClick: (() -> Unit)? = {},
     onDeleteClick: (() -> Unit)? = null
 ) {
     val uriHandler = LocalUriHandler.current
@@ -41,7 +41,6 @@ fun OngoingProjectDetailScreen(
             .systemBarsPadding()
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Top row with back button, title, and optional delete button
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -64,7 +63,7 @@ fun OngoingProjectDetailScreen(
                     )
                 }
 
-                // Admin delete button at top-right
+
                 if (isAdmin && onDeleteClick != null) {
                     IconButton(onClick = onDeleteClick) {
                         Icon(
@@ -76,7 +75,7 @@ fun OngoingProjectDetailScreen(
                 }
             }
 
-            // Project image
+
             Card(
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
@@ -95,7 +94,7 @@ fun OngoingProjectDetailScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // YouTube button
+
             project.youtubeUrl?.let { url ->
                 Button(
                     onClick = { uriHandler.openUri(url) },
@@ -117,7 +116,7 @@ fun OngoingProjectDetailScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Scrollable details
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 80.dp)
@@ -142,17 +141,19 @@ fun OngoingProjectDetailScreen(
             }
         }
 
-        // Admin edit button as FAB
-        if (isAdmin && onEditClick != null) {
-            FloatingActionButton(
-                onClick = onEditClick,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp),
-                containerColor = AccentBlue,
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Icon(Icons.Default.Edit, contentDescription = "Edit Project", tint = Color.White)
+
+        if (isAdmin) {
+            if (onEditClick != null) {
+                FloatingActionButton(
+                    onClick = onEditClick,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp),
+                    containerColor = AccentBlue,
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Icon(Icons.Default.Edit, contentDescription = "Edit Project", tint = Color.White)
+                }
             }
         }
     }

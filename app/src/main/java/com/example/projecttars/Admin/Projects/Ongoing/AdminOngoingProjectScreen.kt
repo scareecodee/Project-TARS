@@ -1,22 +1,23 @@
 package com.example.projecttars.Admin.Projects.Ongoing
 
 import androidx.compose.runtime.Composable
-import com.example.projecttars.DataModels.Project
+import com.example.projecttars.DataModels.OngoingProjectDetail
 import com.example.projecttars.Members.Projects.Ongoing.OngoingProjectsScreen
+import com.example.projecttars.ViewModels.Firebase.OngoingProjectVM
 
 @Composable
 fun AdminOngoingProjectScreen(
-    projects: List<Project>,
-    onViewDetail: (Project) -> Unit,
+    onViewDetail: (OngoingProjectDetail) -> Unit,
     onBack: () -> Unit,
-    onAddProjectClick: (() -> Unit)? = null
+    onAddProjectClick: (() -> Unit)? = null,
+    ongoingProjectVM: OngoingProjectVM
 ){
     OngoingProjectsScreen(
-        projects = projects,
         onViewDetail = onViewDetail,
         onBack = onBack,
         isAdmin = true,
-        onAddProjectClick = onAddProjectClick
+        onAddProjectClick = onAddProjectClick,
+        ongoingProjectVM = ongoingProjectVM
         )
 
 }

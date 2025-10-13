@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,23 +21,29 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.projecttars.DataModels.CompletedProjectDetail
 import com.example.projecttars.R
-import com.example.projecttars.DataModels.Project
 import com.example.projecttars.Members.UiElements.CompletedProjectCard
+import com.example.projecttars.ViewModels.Firebase.CompletedProjectVM
 import com.example.projecttars.ui.theme.AccentBlue
 import com.example.projecttars.ui.theme.DarkGrayBlue
 import com.example.projecttars.ui.theme.DarkSlate
+import androidx.compose.runtime.collectAsState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompletedProjectsScreen(
-    projects: List<Project>,
-    onViewDetail: (Project) -> Unit,
+    onViewDetail: (CompletedProjectDetail) -> Unit,
     onBack: () -> Unit,
     isAdmin: Boolean = false,
-    onAddClick: () -> Unit = {}
+    onAddClick: () -> Unit = {},
+    completedProjectsVM: CompletedProjectVM
 ) {
+    val completedProjects = completedProjectsVM.completedProjects.collectAsState().value
+    LaunchedEffect(Unit) {
+        completedProjectsVM.observeCompletedProjects()
+    }
     BackHandler {
         onBack()
     }
@@ -58,7 +65,7 @@ fun CompletedProjectsScreen(
             .background(DarkGrayBlue)
             .fillMaxSize()
     ) {
-        // -------- Header Row --------
+
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -87,7 +94,7 @@ fun CompletedProjectsScreen(
                 )
             }
 
-            // Add button only for admin
+
             if (isAdmin) {
                 IconButton(onClick = onAddClick) {
                     Icon(
@@ -102,20 +109,37 @@ fun CompletedProjectsScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // -------- List of Projects --------
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(projects) { project ->
-                CompletedProjectCard(
-                    imageResId = project.imageResId,
-                    title = project.title,
-                    shortDescription = project.shortDescription,
-                    onViewDetail = { onViewDetail(project) }
+
+        if (completedProjects.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No Project Found",
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily(Font(R.font.poppinsregular))
                 )
             }
         }
+        else
+        {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(completedProjects) { completedProject ->
+                    CompletedProjectCard(
+                        imageUrl =  completedProject .imageUrl,
+                        title = completedProject .name,
+                        shortDescription =  completedProject .problemSolved,
+                        onViewDetail = { onViewDetail( completedProject ) }
+                    )
+                }
+            }
+        }
+
     }
 }
 

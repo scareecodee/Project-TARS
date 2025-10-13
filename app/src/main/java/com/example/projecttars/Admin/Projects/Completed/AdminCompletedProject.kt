@@ -1,21 +1,22 @@
 package com.example.projecttars.Admin.Projects.Completed
 
 import androidx.compose.runtime.Composable
-import com.example.projecttars.DataModels.Project
+import com.example.projecttars.DataModels.CompletedProjectDetail
 import com.example.projecttars.Members.Projects.Completed.CompletedProjectsScreen
+import com.example.projecttars.ViewModels.Firebase.CompletedProjectVM
 
 @Composable
 fun AdminCompletedProjectsScreen(
-    projects: List<Project>,
-    onViewDetail: (Project) -> Unit,
+    onViewDetail: (CompletedProjectDetail) -> Unit,
     onBack: () -> Unit,
-    onAddProject: () -> Unit
+    onAddProject: () -> Unit,
+    completedProjectVM: CompletedProjectVM
 ) {
     CompletedProjectsScreen(
-        projects = projects,
         onViewDetail = onViewDetail,
         onBack = onBack,
         isAdmin = true,
-        onAddClick = onAddProject
+        onAddClick = onAddProject,
+        completedProjectsVM = completedProjectVM
     )
 }
