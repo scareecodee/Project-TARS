@@ -22,6 +22,7 @@ import com.example.projecttars.DataModels.Achievement
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.ui.Alignment
+import coil.compose.AsyncImage
 
 
 @Composable
@@ -57,7 +58,7 @@ fun AchievementDetailScreen(
                     Text(
                         text = "Achievement Details",
                         color = TextPrimary,
-                        fontSize = 28.sp,
+                        fontSize = 20.sp,
                         fontFamily = FontFamily(Font(R.font.poppinsregular))
                     )
                 }
@@ -85,9 +86,9 @@ fun AchievementDetailScreen(
                     .padding(horizontal = 16.dp),
                 elevation = CardDefaults.cardElevation(12.dp)
             ) {
-                Image(
-                    painter = painterResource(id = achievement.imageResId),
-                    contentDescription = achievement.title,
+                AsyncImage(
+                    model = achievement.imageUrl,
+                    contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )

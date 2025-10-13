@@ -7,16 +7,20 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 
+import com.google.firebase.FirebaseApp
+
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
+    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        FirebaseApp.initializeApp(this)
+
         enableEdgeToEdge()
         setContent {
             val navController = rememberAnimatedNavController()
             AppNavGraph(navController = navController)
-
-
         }
     }
 }

@@ -1,5 +1,4 @@
 package com.example.projecttars.Admin
-
 import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.activity.compose.BackHandler
@@ -25,30 +24,13 @@ import com.example.projecttars.DataModels.TarsLabComponent
 import com.example.projecttars.Members.Home.AdminHome
 import com.example.projecttars.Members.UiElements.BottomNavBar
 import com.example.projecttars.R
+import com.example.projecttars.ViewModels.Firebase.ResourcesVM
+import com.example.projecttars.ViewModels.NavigationData.ResourcesNavVM
 import com.example.projecttars.ui.theme.DarkSlate
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AdminMainScreen(navController: NavHostController) {
-    val components = listOf(
-        TarsLabComponent(R.drawable.tarslogo, "Oscilloscope", true),
-        TarsLabComponent(R.drawable.tarslogo, "Multimeter", false),
-        TarsLabComponent(R.drawable.tarslogo, "Soldering Kit", true),
-        TarsLabComponent(R.drawable.tarslogo, "Power Supply", true),
-        TarsLabComponent(R.drawable.tarslogo, "Oscilloscope", true),
-        TarsLabComponent(R.drawable.tarslogo, "Multimeter", false),
-        TarsLabComponent(R.drawable.tarslogo, "Soldering Kit", true),
-        TarsLabComponent(R.drawable.tarslogo, "Power Supply", true),
-        TarsLabComponent(R.drawable.tarslogo, "Oscilloscope", true),
-        TarsLabComponent(R.drawable.tarslogo, "Multimeter", false),
-        TarsLabComponent(R.drawable.tarslogo, "Soldering Kit", true),
-        TarsLabComponent(R.drawable.tarslogo, "Power Supply", true),
-        TarsLabComponent(R.drawable.tarslogo, "Oscilloscope", true),
-        TarsLabComponent(R.drawable.tarslogo, "Multimeter", false),
-        TarsLabComponent(R.drawable.tarslogo, "Soldering Kit", true),
-        TarsLabComponent(R.drawable.tarslogo, "Power Supply", true)
-
-    )
+fun AdminMainScreen(navController: NavHostController,resourcesVM: ResourcesVM,resourcesNavVM: ResourcesNavVM) {
 
     val activity = (LocalContext.current as? Activity)
 
@@ -90,10 +72,15 @@ fun AdminMainScreen(navController: NavHostController) {
                     onSocialHandleClick = { navController.navigate("AdminSocialMediaScreen") }
                 )
                 "resources" -> AdminResScreen(
-                    components = components,
-                    navController = navController,
+                    resourcesVM = resourcesVM,
                     onAddClick = {
-                        navController.navigate("EquipmentAddScreen")
+                        resourcesNavVM.clearSelection()
+                        navController.navigate("AddEquipment")
+                    },
+                    isAdmin = true,
+                    onCardClick = {
+                        resourcesNavVM.selectEquipment(it)
+                        navController.navigate("AdminResDetailScreen")
                     }
                 )
                 "profile" -> AdminProfileScreen (

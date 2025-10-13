@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import coil.compose.AsyncImage
 import com.example.projecttars.DataModels.OngoingProjectDetail
 import com.example.projecttars.R
 import com.example.projecttars.ui.theme.*
@@ -84,12 +85,12 @@ fun OngoingProjectDetailScreen(
                     .padding(horizontal = 16.dp),
                 elevation = CardDefaults.cardElevation(12.dp)
             ) {
-                Image(
-                    painter = painterResource(id = project.imageResId),
-                    contentDescription = project.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
+               AsyncImage(
+                   model = project.imageUrl,
+                   contentDescription = "Project Image",
+                   contentScale = ContentScale.Crop,
+                   modifier = Modifier.fillMaxSize()
+               )
             }
 
             Spacer(modifier = Modifier.height(16.dp))

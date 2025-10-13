@@ -27,18 +27,29 @@ import com.example.projecttars.ui.theme.DarkGrayBlue
 import com.example.projecttars.ui.theme.DarkSlate
 
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import com.example.projecttars.ViewModels.Firebase.AchievementsVM
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AchievementScreen(
-    achievements: List<Achievement>,
     onViewDetail: (Achievement) -> Unit,
     onBack: () -> Unit,
     isAdmin: Boolean = false,
-    onAddAchievement: () -> Unit = {}
+    onAddAchievement: () -> Unit = {},
+    achievementsVM: AchievementsVM
 ) {
     BackHandler { onBack() }
+
+    val achievements by  achievementsVM.achievements .collectAsState()
+
+    LaunchedEffect(achievements) {
+        achievementsVM.observeAchievements()
+    }
 
     TopAppBar(
         {
@@ -103,13 +114,32 @@ fun AchievementScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            items(achievements) { achievement ->
-                AchievementCard(
-                    imageResId = achievement.imageResId,
-                    title = achievement.title,
-                    shortDescription = achievement.shortDescription,
-                    onViewDetail = { onViewDetail(achievement) }
-                )
+            if(achievements.isEmpty()){
+                item {
+                    Box(
+                        modifier = Modifier.fillParentMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ){
+                        Text(
+                            "No Achievements Found",
+                            fontSize = 25.sp,
+                            color = Color.White,
+                            fontFamily = FontFamily(Font(R.font.poppinsmedium))
+                        )
+                    }
+                }
+            }
+            else{
+                items(achievements) { achievement ->
+                    AchievementCard(
+                        imageUrl = achievement.imageUrl,
+                        title = achievement.title,
+                        shortDescription = achievement.shortDescription,
+                        onViewDetail = {
+                            onViewDetail(achievement)
+                        }
+                    )
+                }
             }
         }
     }

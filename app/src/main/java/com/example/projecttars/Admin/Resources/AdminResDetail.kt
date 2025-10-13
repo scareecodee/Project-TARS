@@ -5,12 +5,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -23,7 +22,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.Font
-import com.example.projecttars.DataModels.EquipmentDetail
+import coil.compose.AsyncImage
+import com.example.projecttars.DataModels.TarsLabComponent
 import com.example.projecttars.ui.theme.AccentBlue
 import com.example.projecttars.ui.theme.AccentOrange
 import com.example.projecttars.ui.theme.DarkGrayBlue
@@ -33,10 +33,11 @@ import com.example.projecttars.ui.theme.TextSecondary
 import com.example.projecttars.R
 @Composable
 fun AdminResDetailScreen(
-    equipment: EquipmentDetail,
+    equipment: TarsLabComponent,
     onBackClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    onEditClick: () -> Unit
+    onEditClick: () -> Unit,
+    isAdmin: Boolean
 ) {
     val uriHandler = LocalUriHandler.current
 
@@ -76,21 +77,22 @@ fun AdminResDetailScreen(
                     )
                 }
 
-                //Delete button only
-                IconButton(onClick = onEditClick) {
-                    Icon(
-                       imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete Equipment",
-                        tint = Color.Red,
-                        modifier = Modifier .clip(RoundedCornerShape(28.dp))
-                            .background(Color.Red.copy(alpha = 0.2f), RoundedCornerShape(28.dp))
-                            .clickable(onClick = onDeleteClick)
 
-                    )
+                if(isAdmin){
+                    IconButton(onClick = onDeleteClick) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete Equipment",
+                            tint = Color.Red,
+                            modifier = Modifier .clip(RoundedCornerShape(28.dp))
+                                .clickable(onClick = onDeleteClick)
+                        )
+                    }
                 }
+
             }
 
-            // Rest of content: image, description, buttons...
+
             Card(
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
@@ -99,17 +101,17 @@ fun AdminResDetailScreen(
                     .padding(horizontal = 16.dp),
                 elevation = CardDefaults.cardElevation(12.dp)
             ) {
-                Image(
-                    painter = painterResource(id = equipment.imageResId),
+                AsyncImage(
+                    model = equipment.imageUrl,
                     contentDescription = equipment.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // YouTube / Documentation buttons...
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -164,8 +166,8 @@ fun AdminResDetailScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = if (equipment.isAvailable) "Available" else "Not Available",
-                color = if (equipment.isAvailable) AccentBlue else AccentOrange,
+                text = if (equipment.available) "Available" else "Not Available",
+                color = if (equipment.available) AccentBlue else AccentOrange,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(horizontal = 16.dp),
                 fontFamily = FontFamily(Font(R.font.poppinsregular))
@@ -173,38 +175,48 @@ fun AdminResDetailScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Card(
-                colors = CardDefaults.cardColors(containerColor = DarkSlate),
-                shape = RoundedCornerShape(16.dp),
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 80.dp)
             ) {
-                Text(
-                    text = equipment.description,
-                    color = TextSecondary,
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(16.dp),
-                    fontFamily = FontFamily(Font(R.font.poppinsitalic))
-                )
+                item {
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = DarkSlate),
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Text(
+                            text = equipment.description,
+                            color = TextSecondary,
+                            fontSize = 16.sp,
+                            modifier = Modifier.padding(16.dp),
+                            fontFamily = FontFamily(Font(R.font.poppinsitalic))
+                        )
+                    }
+                }
             }
+
         }
 
-        // Delete button floating at bottom-right
-        IconButton(
-            onClick = onEditClick,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-                .size(56.dp)
-                .clip(RoundedCornerShape(28.dp))
-                .background(AccentBlue.copy(alpha = 0.2f), RoundedCornerShape(28.dp))
-        ) {
-            Icon(
-                imageVector = Icons.Default.Edit,
-                contentDescription = "Edit Equipment",
-                tint =AccentBlue
-            )
+        if(isAdmin){
+            IconButton(
+                onClick = onEditClick,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
+                    .size(56.dp)
+                    .clip(RoundedCornerShape(28.dp))
+                    .background(AccentBlue.copy(alpha = 0.2f), RoundedCornerShape(28.dp))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit Equipment",
+                    tint =AccentBlue
+                )
+            }
         }
     }
 }

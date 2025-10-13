@@ -1,4 +1,4 @@
-package com.example.projectz.admin.mainscreen.history
+package com.example.projecttars.Common
 
 import com.example.projecttars.R
 import android.annotation.SuppressLint
@@ -24,7 +24,7 @@ import com.example.projecttars.ui.theme.AccentBlue
 import com.example.projecttars.ui.theme.DarkSlate
 
 enum class FilterType {
-    NAME, AVAILABLE,NOT_AVAILABLE
+    NAME, DOMAIN,ID
 }
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -44,7 +44,7 @@ fun SearchBar(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = horizontalPadding/2)
+                .padding(horizontal = horizontalPadding)
                 .height(56.dp)
                 .background(
                     DarkSlate,
@@ -68,8 +68,8 @@ fun SearchBar(
                     Text(
                         when (selectedFilter) {
                             FilterType.NAME -> "Search by name..."
-                            FilterType.AVAILABLE -> "Search by availability..."
-                            FilterType.NOT_AVAILABLE -> "Search by non availability..."
+                            FilterType.ID -> "Search by id..."
+                            FilterType.DOMAIN -> "Search by non domain..."
                         },
                         fontSize = 12.sp,
                         fontFamily = FontFamily(Font(R.font.poppinsitalic)),
@@ -128,28 +128,28 @@ fun SearchBar(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                "Available",
+                                "Domain",
                                 color = AccentBlue,
                                 fontSize = 15.sp,
                                 fontFamily = FontFamily(Font(R.font.poppinsmedium))
                             )
                         },
                         onClick = {
-                            onFilterSelected(FilterType.AVAILABLE)
+                            onFilterSelected(FilterType.DOMAIN)
                             expanded = false
                         }
                     )
                     DropdownMenuItem(
                         text = {
                             Text(
-                                "Not Available",
+                                "ID",
                                 color = AccentBlue,
                                 fontSize = 15.sp,
                                 fontFamily = FontFamily(Font(R.font.poppinsmedium))
                             )
                         },
                         onClick = {
-                            onFilterSelected(FilterType.NOT_AVAILABLE)
+                            onFilterSelected(FilterType.ID)
                             expanded = false
                         }
                     )

@@ -23,13 +23,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import coil.compose.AsyncImage
 import com.example.projecttars.R
 import com.example.projecttars.ui.theme.*
 
 
 @Composable
 fun AdminResCard(
-    imageResId: Int,
+    imageUrl: String,
     componentName: String,
     isAvailable: Boolean,
     onClick: () -> Unit,
@@ -43,64 +44,71 @@ fun AdminResCard(
         colors = CardDefaults.cardColors(containerColor = DarkCharcoal),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
 
-            Column(modifier = Modifier.fillMaxSize()) {
+            // Availability indicator bar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(6.dp)
+                    .background(if (isAvailable) AccentBlue else AccentOrange)
+            )
 
-                // Availability indicator bar
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(6.dp)
-                        .background(if (isAvailable) AccentBlue else AccentOrange)
-                )
 
-                Image(
-                    painter = painterResource(id = imageResId),
-                    contentDescription = "Component Image",
+            if (imageUrl.isNotEmpty()) {
+                AsyncImage(
+                    filterQuality = androidx.compose.ui.graphics.FilterQuality.High,
+                    model = imageUrl,
+                    contentDescription = componentName,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(80.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 16.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .fillMaxWidth()
+                        .weight(1f)
                 )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(
-                    text = componentName,
-                    fontSize = 13.sp,
-                    color = TextPrimary,
-                    fontFamily = FontFamily(Font(R.font.poppinsmedium)),
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.tarslogo),
+                    contentDescription = "Default Logo",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 4.dp)
+                        .fillMaxWidth()
+                        .weight(1f)
                 )
-
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = if (isAvailable) Icons.Default.CheckCircle else Icons.Default.Cancel,
-                        contentDescription = if (isAvailable) "Available" else "Not Available",
-                        tint = if (isAvailable) Color.Green.copy(alpha = 0.5f) else Color.Red.copy(alpha = 0.5f),
-                        modifier = Modifier.size(17.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = if (isAvailable) "Available" else "Not Available",
-                        color = TextSecondary,
-                        fontSize = 10.sp,
-                        fontFamily = FontFamily(Font(R.font.poppinsitalic))
-                    )
-                }
             }
 
+            // Component name
+            Text(
+                text = componentName,
+                fontSize = 13.sp,
+                color = TextPrimary,
+                fontFamily = FontFamily(Font(R.font.poppinsmedium)),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(vertical = 4.dp)
+            )
+
+            // Availability row
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = if (isAvailable) Icons.Default.CheckCircle else Icons.Default.Cancel,
+                    contentDescription = if (isAvailable) "Available" else "Not Available",
+                    tint = if (isAvailable) Color.Green.copy(alpha = 0.5f) else Color.Red.copy(alpha = 0.5f),
+                    modifier = Modifier.size(17.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = if (isAvailable) "Available" else "Not Available",
+                    color = TextSecondary,
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily(Font(R.font.poppinsitalic))
+                )
+            }
         }
     }
 }

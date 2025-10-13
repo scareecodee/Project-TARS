@@ -9,7 +9,7 @@ data class Project(
 
 data class CompletedProjectDetail(
     val name: String,
-    val imageResId: Int,
+    val imageUrl: String,
     val developers: List<String>,
     val guidedBy: List<String>,
     val equipmentUsed: List<String>,
@@ -20,7 +20,7 @@ data class CompletedProjectDetail(
 
 data class OngoingProjectDetail(
     val name: String,
-    val imageResId: Int,
+    val imageUrl: String,
     val developers: List<String>,
     val guidedBy: List<String>,
     val equipmentUsed: List<String>,

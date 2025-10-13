@@ -15,17 +15,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import coil.compose.AsyncImage
 import com.example.projecttars.R
 import com.example.projecttars.ui.theme.*
 
 
 @Composable
 fun TarsMemberCard(
+    imageUrl: String,
     name: String,
     designation: String,
     gender: String,
@@ -68,19 +71,32 @@ fun TarsMemberCard(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    val icon = when (gender) {
-                       "m"-> Icons.Default.Boy
-                        "f" -> Icons.Default.Girl
-                        else -> {
-                            Icons.Default.Error
+                    val imageModifier = Modifier
+                        .size(45.dp)
+                        .clip(CircleShape) // Makes avatar circular
+
+                    if (imageUrl.isEmpty()) {
+                        val icon = when (gender) {
+                            "m" -> Icons.Default.Boy
+                            "f" -> Icons.Default.Girl
+                            else -> Icons.Default.Error
                         }
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = "Default Avatar",
+                            tint = DarkCharcoal,
+                            modifier = imageModifier
+                        )
+                    } else {
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = "Profile Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = imageModifier,
+                        )
                     }
-                    Icon(
-                        icon,
-                        contentDescription = "",
-                        tint = DarkCharcoal,
-                        modifier = Modifier.size(45.dp)
-                    )
+
+
                 }
 
 

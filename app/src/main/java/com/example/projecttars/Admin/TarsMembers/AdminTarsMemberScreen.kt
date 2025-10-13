@@ -1,21 +1,22 @@
 package com.example.projecttars.Admin.TarsMembers
 
 import androidx.compose.runtime.Composable
-import com.example.projecttars.DataModels.TarsMember
+import com.example.projecttars.DataModels.MemberDetail
 import com.example.projecttars.Members.TarsMembers.TarsMembersScreen
+import com.example.projecttars.ViewModels.Firebase.MembersVM
 
 @Composable
 fun AdminTarsMemberScreen(
-    tarsMembers: List<TarsMember>,
-    onViewDetail: (TarsMember) -> Unit,
+    onViewDetail: (MemberDetail) -> Unit,
     onBack: () -> Unit,
-    onAddMember: () -> Unit = {}
+    onAddMember: () -> Unit = {},
+    membersVM: MembersVM
 ){
     TarsMembersScreen(
-        tarsMembers = tarsMembers,
         onViewDetail = onViewDetail,
         onBack = onBack,
         isAdmin = true,
-        onAddMember = onAddMember
+        onAddMember = onAddMember,
+        membersVM = membersVM
     )
 }

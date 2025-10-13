@@ -22,9 +22,9 @@ import com.example.projecttars.R
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import coil.compose.AsyncImage
 import com.example.projecttars.DataModels.MemberDetail
-
-
+import com.example.projecttars.ViewModels.NavigationData.MemberNavVM
 
 @Composable
 fun MemberDetailScreen(
@@ -32,9 +32,11 @@ fun MemberDetailScreen(
     onBackClick: () -> Unit,
     isAdmin: Boolean = false,
     onDeleteClick: (() -> Unit)? = null,
-    onEditClick: (() -> Unit)? = null
+    onEditClick: (() -> Unit)? = null,
+
 ) {
     val uriHandler = LocalUriHandler.current
+
 
     Box(
         modifier = Modifier
@@ -44,7 +46,7 @@ fun MemberDetailScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
 
-            // ----- Header -----
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -60,7 +62,7 @@ fun MemberDetailScreen(
                     Text(
                         text = "Member Details",
                         color = TextPrimary,
-                        fontSize = 28.sp,
+                        fontSize = 25.sp,
                         fontFamily = FontFamily(Font(R.font.poppinsregular))
                     )
                 }
@@ -81,9 +83,9 @@ fun MemberDetailScreen(
                     .padding(horizontal = 16.dp),
                 elevation = CardDefaults.cardElevation(12.dp)
             ) {
-                Image(
-                    painter = painterResource(id = member.imageResId),
-                    contentDescription = member.name,
+                AsyncImage(
+                    model = member.imageUrl,
+                    contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )

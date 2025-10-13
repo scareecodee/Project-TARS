@@ -17,12 +17,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.projecttars.R
 import com.example.projecttars.ui.theme.*
 
 @Composable
 fun AchievementCard(
-    imageResId: Int,
+    imageUrl: String,
     title: String,
     shortDescription: String,
     onViewDetail: () -> Unit
@@ -51,15 +52,15 @@ fun AchievementCard(
         ) {
             Column {
 
-                Image(
-                    painter = painterResource(id = imageResId),
-                    contentDescription = "Achievement Image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                )
+               AsyncImage(
+                   model = imageUrl,
+                   contentDescription = null,
+                   contentScale = ContentScale.Crop,
+                   modifier = Modifier
+                       .fillMaxWidth()
+                       .height(200.dp)
+                       .clip(RoundedCornerShape(8.dp)),
+               )
 
                 Spacer(modifier = Modifier.height(8.dp))
 

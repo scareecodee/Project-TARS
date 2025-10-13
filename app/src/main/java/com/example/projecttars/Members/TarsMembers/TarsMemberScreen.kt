@@ -16,21 +16,48 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import com.example.projecttars.DataModels.TarsMember
 import com.example.projecttars.Members.UiElements.TarsMemberCard
 import com.example.projecttars.ui.theme.*
 import com.example.projecttars.R
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
+import com.example.projecttars.Common.FilterType
+import com.example.projecttars.DataModels.MemberDetail
+import com.example.projecttars.ViewModels.Firebase.MembersVM
+import com.example.projecttars.Common.SearchBar
 
 @Composable
 fun TarsMembersScreen(
-    tarsMembers: List<TarsMember>,
-    onViewDetail: (TarsMember) -> Unit,
+    onViewDetail: (MemberDetail) -> Unit,
     onBack: () -> Unit,
     isAdmin: Boolean = false,
-    onAddMember: () -> Unit = {}
+    onAddMember: () -> Unit = {},
+    membersVM: MembersVM
 ) {
     BackHandler { onBack() }
+
+    val members by membersVM.members.collectAsState()
+    LaunchedEffect(Unit) {
+        membersVM.observeMembers()
+    }
+    var selectedFilter by remember { mutableStateOf(FilterType.NAME) }
+    var query by remember { mutableStateOf("") }
+
+    val filteredMembers = remember(query, selectedFilter, members) {
+        members.filter { member ->
+            when (selectedFilter) {
+                FilterType.NAME -> member.name?.contains(query, ignoreCase = true) == true
+                FilterType.ID -> member.id?.contains(query, ignoreCase = true) == true
+                FilterType.DOMAIN -> member.domain?.contains(query, ignoreCase = true) == true
+            }
+        }
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -77,23 +104,47 @@ fun TarsMembersScreen(
             }
         }
 
+       SearchBar(
+           query = query,
+           onQueryChange = { query = it },
+           selectedFilter = selectedFilter,
+           onFilterSelected = { selectedFilter = it }
+       )
         Spacer(modifier = Modifier.height(16.dp))
-
-
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
         ) {
-            items(tarsMembers) { tarsMember ->
-                TarsMemberCard(
-                    name = tarsMember.name,
-                    designation = tarsMember.designation,
-                    gender = tarsMember.gender,
-                    domain = tarsMember.domain,
-                    id = tarsMember.id,
-                    onViewDetail = { onViewDetail(tarsMember) }
-                )
+            if(filteredMembers.isEmpty()){
+                item {
+                    Box(
+                        modifier = Modifier.fillParentMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ){
+                        Text(
+                            "No Members Found",
+                            fontSize = 25.sp,
+                            color = Color.White,
+                            fontFamily = FontFamily(Font(R.font.poppinsmedium))
+                        )
+                    }
+                }
+            } else {
+                items(filteredMembers) { member ->
+                    TarsMemberCard(
+                        name = member.name,
+                        designation = member.designation,
+                        gender = member.gender,
+                        domain = member.domain,
+                        id = member.id,
+                        onViewDetail = { onViewDetail(member) },
+                        imageUrl = member.imageUrl
+                    )
+                }
             }
         }
+
     }
 }

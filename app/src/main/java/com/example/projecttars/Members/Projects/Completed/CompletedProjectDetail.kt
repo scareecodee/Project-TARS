@@ -19,11 +19,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import coil.compose.AsyncImage
 import com.example.projecttars.DataModels.CompletedProjectDetail
 import com.example.projecttars.R
 import com.example.projecttars.ui.theme.*
-
-
 
 @Composable
 fun CompletedProjectDetailScreen(
@@ -34,6 +33,8 @@ fun CompletedProjectDetailScreen(
     isAdmin: Boolean
 ) {
     val uriHandler = LocalUriHandler.current
+
+
 
     Box(
         modifier = Modifier
@@ -82,25 +83,22 @@ fun CompletedProjectDetailScreen(
                 }
             }
 
-
             Card(
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp)
-                    .padding(horizontal = 18.dp),
+                    .height(220.dp)
+                    .padding(horizontal = 16.dp),
                 elevation = CardDefaults.cardElevation(12.dp)
             ) {
-                Image(
-                    painter = painterResource(id = project.imageResId),
+                AsyncImage(
+                    model = project.imageUrl,
                     contentDescription = project.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
                 )
             }
-
             Spacer(modifier = Modifier.height(16.dp))
-
 
             project.youtubeUrl?.let { url ->
                 Button(

@@ -21,29 +21,13 @@ import com.example.projecttars.Members.Profile.ProfileScreen
 import com.example.projecttars.Members.Resources.ResourcesScreen
 import com.example.projecttars.ui.theme.DarkSlate
 import com.example.projecttars.R
+import com.example.projecttars.ViewModels.Firebase.ResourcesVM
+import com.example.projecttars.ViewModels.NavigationData.ResourcesNavVM
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen(navController: NavHostController) {
-    val components = listOf(
-        TarsLabComponent(R.drawable.tarslogo, "Oscilloscope", true),
-        TarsLabComponent(R.drawable.tarslogo, "Multimeter", false),
-        TarsLabComponent(R.drawable.tarslogo, "Soldering Kit", true),
-        TarsLabComponent(R.drawable.tarslogo, "Power Supply", true),
-        TarsLabComponent(R.drawable.tarslogo, "Oscilloscope", true),
-        TarsLabComponent(R.drawable.tarslogo, "Multimeter", false),
-        TarsLabComponent(R.drawable.tarslogo, "Soldering Kit", true),
-        TarsLabComponent(R.drawable.tarslogo, "Power Supply", true),
-        TarsLabComponent(R.drawable.tarslogo, "Oscilloscope", true),
-        TarsLabComponent(R.drawable.tarslogo, "Multimeter", false),
-        TarsLabComponent(R.drawable.tarslogo, "Soldering Kit", true),
-        TarsLabComponent(R.drawable.tarslogo, "Power Supply", true),
-        TarsLabComponent(R.drawable.tarslogo, "Oscilloscope", true),
-        TarsLabComponent(R.drawable.tarslogo, "Multimeter", false),
-        TarsLabComponent(R.drawable.tarslogo, "Soldering Kit", true),
-        TarsLabComponent(R.drawable.tarslogo, "Power Supply", true)
+fun MainScreen(navController: NavHostController, resourcesVM: ResourcesVM, resourcesNavVM: ResourcesNavVM) {
 
-    )
 
     val activity = (LocalContext.current as? Activity)
 
@@ -85,8 +69,10 @@ fun MainScreen(navController: NavHostController) {
                     onSocialHandleClick = { navController.navigate("SocialMediaScreen") }
                 )
                 "resources" -> ResourcesScreen(
-                    components = components,
-                    navController = navController
+                    navController = navController,
+                    resourcesVM = resourcesVM,
+                    onAddClick = {},
+                    resourcesNavVM = resourcesNavVM
                 )
                 "profile" -> ProfileScreen (
                     onNotificationsClick = {

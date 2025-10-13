@@ -1,13 +1,16 @@
+package com.example.projecttars
+
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
-import com.google.accompanist.navigation.animation.composable
+import androidx.navigation.NamedNavArgument
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.navigation.compose.composable
 
-
+// Transition lambdas must use AnimatedContentTransitionScope with NavBackStackEntry
 private val defaultEnter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? = {
     fadeIn(animationSpec = tween(500))
 }
@@ -24,13 +27,16 @@ private val defaultPopExit: AnimatedContentTransitionScope<NavBackStackEntry>.()
     fadeOut(animationSpec = tween(500))
 }
 
+// Content lambda uses AnimatedContentScope without generics
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.defaultComposable(
     route: String,
-    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
+    arguments: List<NamedNavArgument> = emptyList(),
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
 ) {
     composable(
         route = route,
+        arguments = arguments,
         enterTransition = defaultEnter,
         exitTransition = defaultExit,
         popEnterTransition = defaultPopEnter,
