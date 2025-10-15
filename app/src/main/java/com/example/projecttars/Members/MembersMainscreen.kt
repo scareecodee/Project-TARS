@@ -78,9 +78,6 @@ fun MainScreen(navController: NavHostController, resourcesVM: ResourcesVM, resou
                     onNotificationsClick = {
                         navController.navigate("NotificationScreen")
                     },
-                    onMessageAdminClick ={
-                        navController.navigate("MessageAdminScreen")
-                    }
                 )
             }
         }

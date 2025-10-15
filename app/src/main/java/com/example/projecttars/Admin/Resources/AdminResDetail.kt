@@ -1,36 +1,30 @@
 package com.example.projecttars.Admin.Resources
+
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.font.Font
 import coil.compose.AsyncImage
 import com.example.projecttars.DataModels.TarsLabComponent
-import com.example.projecttars.ui.theme.AccentBlue
-import com.example.projecttars.ui.theme.AccentOrange
-import com.example.projecttars.ui.theme.DarkGrayBlue
-import com.example.projecttars.ui.theme.DarkSlate
-import com.example.projecttars.ui.theme.TextPrimary
-import com.example.projecttars.ui.theme.TextSecondary
 import com.example.projecttars.R
+import com.example.projecttars.ui.theme.*
+
 @Composable
 fun AdminResDetailScreen(
     equipment: TarsLabComponent,
@@ -40,21 +34,44 @@ fun AdminResDetailScreen(
     isAdmin: Boolean
 ) {
     val uriHandler = LocalUriHandler.current
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
 
-    Box(modifier = Modifier.fillMaxSize().background(DarkGrayBlue)) {
+    // Responsive values
+    val horizontalPadding = (screenWidth * 0.04).dp
+    val verticalPadding = (screenHeight * 0.02).dp
+    val topRowSpacing = (screenWidth * 0.02).dp
+    val iconSize = (screenWidth * 0.07).dp
+    val headingFontSize = (screenWidth * 0.05).sp
+    val titleFontSize = (screenWidth * 0.06).sp
+    val subtitleFontSize = (screenWidth * 0.04).sp
+    val buttonHeight = (screenHeight * 0.07).dp
+    val buttonCorner = (screenWidth * 0.03).dp
+    val cardHeight = (screenHeight * 0.28).dp
+    val fabSize = (screenWidth * 0.14).dp
+    val fabPadding = (screenWidth * 0.04).dp
+    val lazyColumnPadding = (screenHeight * 0.04).dp
+    val textPadding = (screenWidth * 0.03).dp
+    val iconTextSpacing = (screenWidth * 0.02).dp
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(DarkGrayBlue)
+    ) {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .systemBarsPadding()
-                .padding(bottom = 16.dp)
+                .padding(bottom = lazyColumnPadding)
         ) {
-            // Top Row with back & edit button
+            // Top Row with back & delete
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                    .padding(horizontal = horizontalPadding, vertical = verticalPadding),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -63,42 +80,40 @@ fun AdminResDetailScreen(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",
                             tint = TextPrimary,
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.size(iconSize)
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(topRowSpacing))
 
                     Text(
                         text = "Equipment Details",
                         color = TextPrimary,
-                        fontSize = 20.sp,
+                        fontSize = headingFontSize,
                         fontFamily = FontFamily(Font(R.font.poppinsregular))
                     )
                 }
 
-
-                if(isAdmin){
+                if (isAdmin) {
                     IconButton(onClick = onDeleteClick) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete Equipment",
                             tint = Color.Red,
-                            modifier = Modifier .clip(RoundedCornerShape(28.dp))
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(fabSize / 2))
                                 .clickable(onClick = onDeleteClick)
                         )
                     }
                 }
-
             }
 
-
             Card(
-                shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(buttonCorner),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp)
-                    .padding(horizontal = 16.dp),
+                    .height(cardHeight)
+                    .padding(horizontal = horizontalPadding),
                 elevation = CardDefaults.cardElevation(12.dp)
             ) {
                 AsyncImage(
@@ -109,28 +124,28 @@ fun AdminResDetailScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
+            Spacer(modifier = Modifier.height(verticalPadding))
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(horizontal = horizontalPadding),
+                horizontalArrangement = Arrangement.spacedBy(iconTextSpacing)
             ) {
                 equipment.youtubeUrl?.let { url ->
                     Button(
                         onClick = { uriHandler.openUri(url) },
                         colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(16.dp)
+                        modifier = Modifier.weight(1f).height(buttonHeight),
+                        shape = RoundedCornerShape(buttonCorner)
                     ) {
                         Icon(Icons.Default.PlayArrow, contentDescription = "YouTube", tint = TextPrimary)
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(iconTextSpacing))
                         Text(
                             "Play Lecture",
                             color = TextPrimary,
-                            fontFamily = FontFamily(Font(R.font.poppinsregular))
+                            fontFamily = FontFamily(Font(R.font.poppinsregular)),
+                            fontSize = subtitleFontSize
                         )
                     }
                 }
@@ -139,85 +154,83 @@ fun AdminResDetailScreen(
                     Button(
                         onClick = { uriHandler.openUri(url) },
                         colors = ButtonDefaults.buttonColors(containerColor = AccentBlue),
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(16.dp)
+                        modifier = Modifier.weight(1f).height(buttonHeight),
+                        shape = RoundedCornerShape(buttonCorner)
                     ) {
                         Icon(Icons.Default.Description, contentDescription = "Documentation", tint = TextPrimary)
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(iconTextSpacing))
                         Text(
                             "Read About",
                             color = TextPrimary,
-                            fontFamily = FontFamily(Font(R.font.poppinsregular))
+                            fontFamily = FontFamily(Font(R.font.poppinsregular)),
+                            fontSize = subtitleFontSize
                         )
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(verticalPadding))
 
             Text(
                 text = equipment.name,
                 color = TextPrimary,
-                fontSize = 24.sp,
-                modifier = Modifier.padding(horizontal = 16.dp),
+                fontSize = titleFontSize,
+                modifier = Modifier.padding(horizontal = horizontalPadding),
                 fontFamily = FontFamily(Font(R.font.poppinsbold))
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(topRowSpacing))
 
             Text(
                 text = if (equipment.available) "Available" else "Not Available",
                 color = if (equipment.available) AccentBlue else AccentOrange,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(horizontal = 16.dp),
+                fontSize = subtitleFontSize,
+                modifier = Modifier.padding(horizontal = horizontalPadding),
                 fontFamily = FontFamily(Font(R.font.poppinsregular))
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(verticalPadding))
 
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 80.dp)
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = lazyColumnPadding)
             ) {
                 item {
                     Card(
                         colors = CardDefaults.cardColors(containerColor = DarkSlate),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(buttonCorner),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = horizontalPadding)
                     ) {
                         Text(
                             text = equipment.description,
                             color = TextSecondary,
-                            fontSize = 16.sp,
-                            modifier = Modifier.padding(16.dp),
+                            fontSize = subtitleFontSize,
+                            modifier = Modifier.padding(textPadding),
                             fontFamily = FontFamily(Font(R.font.poppinsitalic))
                         )
                     }
                 }
             }
-
         }
 
-        if(isAdmin){
+        if (isAdmin) {
             IconButton(
                 onClick = onEditClick,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-                    .size(56.dp)
-                    .clip(RoundedCornerShape(28.dp))
-                    .background(AccentBlue.copy(alpha = 0.2f), RoundedCornerShape(28.dp))
+                    .padding(fabPadding)
+                    .size(fabSize)
+                    .clip(RoundedCornerShape(fabSize / 2))
+                    .background(AccentBlue.copy(alpha = 0.2f), RoundedCornerShape(fabSize / 2))
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Edit Equipment",
-                    tint =AccentBlue
+                    tint = AccentBlue
                 )
             }
         }
     }
 }
-

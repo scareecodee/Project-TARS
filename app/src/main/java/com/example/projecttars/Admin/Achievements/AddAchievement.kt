@@ -24,7 +24,7 @@ import com.example.projecttars.ui.theme.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddAchievementScreen(
-    heading:String,
+    heading: String,
     onBackClick: () -> Unit,
     onSaveClick: (Achievement) -> Unit,
     achievementsNavVM: AchievementsNavVM
@@ -36,6 +36,7 @@ fun AddAchievementScreen(
     var imageUrl by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("") }
     var shortDescription by remember { mutableStateOf("") }
+
     LaunchedEffect(selectedAchievement) {
         selectedAchievement?.let {
             imageUrl = it.imageUrl
@@ -44,70 +45,90 @@ fun AddAchievementScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        heading,
-                        color = TextPrimary,
-                        fontFamily = poppins,
-                        fontSize = 20.sp
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextPrimary)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkSlate)
-            )
-        },
-        containerColor = DarkGrayBlue,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    onSaveClick(
-                        Achievement(
-                            imageUrl = imageUrl,
-                            title = title,
-                            shortDescription = shortDescription
-                        )
-                    )
-                },
-                containerColor = AccentBlue
-            ) {
-                Icon(Icons.Default.Check, contentDescription = "Save", tint = TextPrimary)
-            }
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(16.dp)
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            AddAchievementTextField("Image URL", Icons.Default.Image, imageUrl) { imageUrl = it }
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        val screenWidth = maxWidth.value
+        val screenHeight = maxHeight.value
 
-            if (imageUrl.isNotBlank()) {
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp)
+        // Responsive sizes
+        val horizontalPadding = (screenWidth * 0.04f).dp
+        val verticalPadding = (screenHeight * 0.02f).dp
+        val cardHeight = (screenHeight * 0.25f).dp
+        val spacerHeight = (screenHeight * 0.015f).dp
+        val fontSizeHeading = (screenWidth * 0.05f).sp
+        val fabSize = (screenWidth * 0.14f).dp
+
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            heading,
+                            color = TextPrimary,
+                            fontFamily = poppins,
+                            fontSize = fontSizeHeading
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBackClick) {
+                            Icon(
+                                Icons.Default.ArrowBack,
+                                contentDescription = "Back",
+                                tint = TextPrimary
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkSlate)
+                )
+            },
+            containerColor = DarkGrayBlue,
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        onSaveClick(
+                            Achievement(
+                                imageUrl = imageUrl,
+                                title = title,
+                                shortDescription = shortDescription
+                            )
+                        )
+                    },
+                    containerColor = AccentBlue,
+                    modifier = Modifier.size(fabSize)
                 ) {
-                    AsyncImage(
-                        model = imageUrl,
-                        contentDescription = "Preview",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
+                    Icon(Icons.Default.Check, contentDescription = "Save", tint = TextPrimary)
                 }
             }
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .padding(horizontal = horizontalPadding, vertical = verticalPadding)
+                    .verticalScroll(scrollState),
+                verticalArrangement = Arrangement.spacedBy(spacerHeight)
+            ) {
+                AddAchievementTextField("Image URL", Icons.Default.Image, imageUrl) { imageUrl = it }
 
-            AddAchievementTextField("Title", Icons.Default.Star, title) { title = it }
-            AddAchievementTextField("Short Description", Icons.Default.Description, shortDescription) { shortDescription = it }
+                if (imageUrl.isNotBlank()) {
+                    Card(
+                        shape = RoundedCornerShape((screenWidth * 0.04f).dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(cardHeight)
+                    ) {
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = "Preview",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+
+                AddAchievementTextField("Title", Icons.Default.Star, title) { title = it }
+                AddAchievementTextField("Short Description", Icons.Default.Description, shortDescription) { shortDescription = it }
+            }
         }
     }
 }
@@ -119,28 +140,31 @@ fun AddAchievementTextField(
     value: String,
     onValueChange: (String) -> Unit
 ) {
-    val poppins = FontFamily(Font(R.font.poppinsregular))
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label, fontFamily = poppins, color = TextSecondary) },
-        leadingIcon = { Icon(icon, contentDescription = label, tint = TextPrimary) },
-        modifier = Modifier.fillMaxWidth(),
-        textStyle = LocalTextStyle.current.copy(
-            color = TextPrimary,
-            fontFamily = FontFamily(Font(R.font.poppinsmedium))
-        ),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = DarkSlate,
-            unfocusedContainerColor = DarkSlate,
-            focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
-            unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
-            cursorColor = AccentBlue,
-            focusedTextColor = TextPrimary,
-            unfocusedTextColor = TextPrimary
+    BoxWithConstraints {
+        val screenWidth = maxWidth.value
+        val fontSizeText = (screenWidth * 0.045f).sp
+        val poppins = FontFamily(Font(R.font.poppinsregular))
+
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            label = { Text(label, fontFamily = poppins, color = TextSecondary, fontSize = fontSizeText) },
+            leadingIcon = { Icon(icon, contentDescription = label, tint = TextPrimary) },
+            modifier = Modifier.fillMaxWidth(),
+            textStyle = LocalTextStyle.current.copy(
+                color = TextPrimary,
+                fontFamily = FontFamily(Font(R.font.poppinsmedium)),
+                fontSize = fontSizeText
+            ),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = DarkSlate,
+                unfocusedContainerColor = DarkSlate,
+                focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                cursorColor = AccentBlue,
+                focusedTextColor = TextPrimary,
+                unfocusedTextColor = TextPrimary
+            )
         )
-    )
+    }
 }
-
-
-

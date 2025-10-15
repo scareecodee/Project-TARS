@@ -71,6 +71,8 @@ dependencies {
     // Firebase Realtime Database
     implementation("com.google.firebase:firebase-database-ktx")
 
+    implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
+
 
 
 

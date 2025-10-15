@@ -1,6 +1,5 @@
 package com.example.projecttars.Members.Projects.Completed
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,13 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.projecttars.DataModels.CompletedProjectDetail
 import com.example.projecttars.R
@@ -34,22 +32,38 @@ fun CompletedProjectDetailScreen(
 ) {
     val uriHandler = LocalUriHandler.current
 
-
-
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .background(DarkGrayBlue)
             .systemBarsPadding()
     ) {
+        val screenWidth = maxWidth.value
+        val screenHeight = maxHeight.value
+
+        // Dynamic sizes
+        val horizontalPadding = (screenWidth * 0.04f).dp
+        val verticalPadding = (screenHeight * 0.02f).dp
+        val cardHeight = (screenHeight * 0.25f).dp
+        val cornerRadius = (screenWidth * 0.06f).dp
+        val fabPadding = (screenWidth * 0.04f).dp
+        val iconSize = (screenWidth * 0.07f).dp
+        val headingFontSize = (screenWidth * 0.07f).sp
+        val buttonCorner = (screenWidth * 0.04f).dp
+        val spacerHeight1 = (screenHeight * 0.02f).dp
+        val spacerHeight2 = (screenHeight * 0.015f).dp
+        val cardSectionCorner = (screenWidth * 0.04f).dp
+        val cardSectionElevation = (screenWidth * 0.01f).dp
+        val cardSectionIconSize = (screenWidth * 0.07f).dp
+        val cardSectionTitleFont = (screenWidth * 0.045f).sp
+        val cardSectionContentFont = (screenWidth * 0.035f).sp
+
         Column(modifier = Modifier.fillMaxSize()) {
-
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                    .padding(horizontal = horizontalPadding, vertical = verticalPadding),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -57,48 +71,50 @@ fun CompletedProjectDetailScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = TextPrimary
+                            tint = TextPrimary,
+                            modifier = Modifier.size(iconSize)
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(horizontalPadding / 2))
 
                     Text(
                         text = "Project Details",
                         color = TextPrimary,
-                        fontSize = 28.sp,
+                        fontSize = headingFontSize,
                         fontFamily = FontFamily(Font(R.font.poppinsregular))
                     )
                 }
-
 
                 if (isAdmin) {
                     IconButton(onClick = onDeleteClick) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete Project",
-                            tint = MaterialTheme.colorScheme.error
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(iconSize)
                         )
                     }
                 }
             }
 
             Card(
-                shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(cornerRadius),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp)
-                    .padding(horizontal = 16.dp),
-                elevation = CardDefaults.cardElevation(12.dp)
+                    .height(cardHeight)
+                    .padding(horizontal = horizontalPadding),
+                elevation = CardDefaults.cardElevation(cardSectionElevation)
             ) {
                 AsyncImage(
                     model = project.imageUrl,
                     contentDescription = project.name,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                    contentScale = ContentScale.Crop
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+
+            Spacer(modifier = Modifier.height(spacerHeight1))
 
             project.youtubeUrl?.let { url ->
                 Button(
@@ -106,11 +122,11 @@ fun CompletedProjectDetailScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    shape = RoundedCornerShape(16.dp)
+                        .padding(horizontal = horizontalPadding),
+                    shape = RoundedCornerShape(buttonCorner)
                 ) {
                     Icon(Icons.Default.PlayArrow, contentDescription = "YouTube", tint = TextPrimary)
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(horizontalPadding / 2))
                     Text(
                         text = "Watch Demo",
                         color = TextPrimary,
@@ -119,41 +135,94 @@ fun CompletedProjectDetailScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
+            Spacer(modifier = Modifier.height(spacerHeight1))
 
             Text(
                 text = project.name,
                 color = TextPrimary,
-                fontSize = 24.sp,
+                fontSize = headingFontSize,
                 fontFamily = FontFamily(Font(R.font.poppinsbold)),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier.padding(horizontal = horizontalPadding, vertical = verticalPadding / 2)
             )
-            Spacer(modifier = Modifier.height(16.dp))
 
+            Spacer(modifier = Modifier.height(spacerHeight2))
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 80.dp) // leave space for FAB
+                contentPadding = PaddingValues(bottom = fabPadding * 2)
             ) {
-                item { CardSection(Icons.Default.Person, "Developers", project.developers.joinToString(", ")) }
-                item { CardSection(Icons.Default.School, "Guided By", project.guidedBy.joinToString(", ")) }
-                item { CardSection(Icons.Default.Build, "Equipment Used", project.equipmentUsed.joinToString(", ")) }
-                item { CardSection(Icons.Default.Code, "Tech Stack", project.techStack.joinToString(", ")) }
-                item { CardSection(Icons.Default.HelpOutline, "Problem Solved", project.problemSolved) }
-                item { Spacer(modifier = Modifier.height(16.dp)) }
+                item {
+                    CardSection(
+                        icon = Icons.Default.Person,
+                        title = "Developers",
+                        content = project.developers.joinToString(", "),
+                        cornerRadius = cardSectionCorner,
+                        elevation = cardSectionElevation,
+                        iconSize = cardSectionIconSize,
+                        titleFontSize = cardSectionTitleFont,
+                        contentFontSize = cardSectionContentFont
+                    )
+                }
+                item {
+                    CardSection(
+                        icon = Icons.Default.School,
+                        title = "Guided By",
+                        content = project.guidedBy.joinToString(", "),
+                        cornerRadius = cardSectionCorner,
+                        elevation = cardSectionElevation,
+                        iconSize = cardSectionIconSize,
+                        titleFontSize = cardSectionTitleFont,
+                        contentFontSize = cardSectionContentFont
+                    )
+                }
+                item {
+                    CardSection(
+                        icon = Icons.Default.Build,
+                        title = "Equipment Used",
+                        content = project.equipmentUsed.joinToString(", "),
+                        cornerRadius = cardSectionCorner,
+                        elevation = cardSectionElevation,
+                        iconSize = cardSectionIconSize,
+                        titleFontSize = cardSectionTitleFont,
+                        contentFontSize = cardSectionContentFont
+                    )
+                }
+                item {
+                    CardSection(
+                        icon = Icons.Default.Code,
+                        title = "Tech Stack",
+                        content = project.techStack.joinToString(", "),
+                        cornerRadius = cardSectionCorner,
+                        elevation = cardSectionElevation,
+                        iconSize = cardSectionIconSize,
+                        titleFontSize = cardSectionTitleFont,
+                        contentFontSize = cardSectionContentFont
+                    )
+                }
+                item {
+                    CardSection(
+                        icon = Icons.Default.HelpOutline,
+                        title = "Problem Solved",
+                        content = project.problemSolved,
+                        cornerRadius = cardSectionCorner,
+                        elevation = cardSectionElevation,
+                        iconSize = cardSectionIconSize,
+                        titleFontSize = cardSectionTitleFont,
+                        contentFontSize = cardSectionContentFont
+                    )
+                }
+                item { Spacer(modifier = Modifier.height(spacerHeight1)) }
             }
         }
-
 
         if (isAdmin) {
             FloatingActionButton(
                 onClick = onEditClick,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(16.dp),
+                    .padding(fabPadding),
                 containerColor = AccentBlue,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(buttonCorner)
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
@@ -165,40 +234,48 @@ fun CompletedProjectDetailScreen(
     }
 }
 
-
 @Composable
-fun CardSection(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String, content: String) {
+fun CardSection(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    content: String,
+    cornerRadius: androidx.compose.ui.unit.Dp,
+    elevation: androidx.compose.ui.unit.Dp,
+    iconSize: androidx.compose.ui.unit.Dp,
+    titleFontSize: androidx.compose.ui.unit.TextUnit,
+    contentFontSize: androidx.compose.ui.unit.TextUnit
+) {
     Card(
         colors = CardDefaults.cardColors(containerColor = DarkSlate),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(cornerRadius),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
+            .padding(horizontal = cornerRadius, vertical = cornerRadius / 2),
+        elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
         Row(
             verticalAlignment = Alignment.Top,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(cornerRadius)
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = title,
                 tint = AccentBlue,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(iconSize)
             )
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(cornerRadius / 2))
             Column {
                 Text(
                     text = title,
                     color = TextPrimary,
-                    fontSize = 16.sp,
+                    fontSize = titleFontSize,
                     fontFamily = FontFamily(Font(R.font.poppinsmedium))
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(cornerRadius / 4))
                 Text(
                     text = content,
                     color = TextSecondary,
-                    fontSize = 14.sp,
+                    fontSize = contentFontSize,
                     fontFamily = FontFamily(Font(R.font.poppinsregular))
                 )
             }

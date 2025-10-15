@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Person
@@ -31,120 +32,135 @@ fun MembersLogin(
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkGrayBlue)
-            .padding(16.dp),
+            .background(DarkGrayBlue),
         contentAlignment = Alignment.Center
     ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = DarkSlate),
-            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
+        val screenWidth = maxWidth.value
+
+        // Responsive values
+        val outerPadding = (screenWidth * 0.04f).dp
+        val cardCornerRadius = (screenWidth * 0.05f).dp
+        val cardElevation = (screenWidth * 0.015f).dp
+        val verticalPadding = (screenWidth * 0.04f).dp
+        val iconSize = (screenWidth * 0.16f).dp
+        val spacerSmall = (screenWidth * 0.035f).dp
+        val spacerMedium = (screenWidth * 0.05f).dp
+        val textSizeHeading = (screenWidth * 0.07f).sp
+        val textSizeButton = (screenWidth * 0.045f).sp
+        val buttonCornerRadius = (screenWidth * 0.03f).dp
+        val textFieldFontSize = (screenWidth * 0.04f).sp
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(outerPadding),
+            contentAlignment = Alignment.Center
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(DarkSlate, DarkGrayBlue)
-                        )
-                    )
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(cardCornerRadius),
+                colors = CardDefaults.cardColors(containerColor = DarkSlate),
+                elevation = CardDefaults.cardElevation(defaultElevation = cardElevation)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Groups,
-                    contentDescription = "Student Icon",
-                    tint = AccentBlue,
-                    modifier = Modifier.size(64.dp)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Student Login",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
-                    fontFamily = FontFamily(Font(R.font.poppinsmedium))
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                OutlinedTextField(
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "User Icon",
-                            tint = AccentBlue
-                        )
-                    },
-                    value = username,
-                    onValueChange = { username = it },
-                    label = { Text("Username",fontFamily = FontFamily(Font(R.font.poppinsregular))) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedContainerColor = DarkSlate,
-                        unfocusedContainerColor = DarkSlate,
-                        focusedIndicatorColor = Color.White,
-                        unfocusedIndicatorColor = Color.White,
-                        cursorColor = Color.White,
-                        focusedLabelColor =AccentBlue,
-                        unfocusedLabelColor = AccentBlue
-                    )
-                    , textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.poppinsregular)))
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Key,
-                            contentDescription = "User Icon",
-                            tint = AccentBlue
-                        )
-                    },
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Password",fontFamily = FontFamily(Font(R.font.poppinsregular))) },
-                    singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedContainerColor = DarkSlate,
-                        unfocusedContainerColor = DarkSlate,
-                        focusedIndicatorColor = Color.White,
-                        unfocusedIndicatorColor = Color.White,
-                        cursorColor = Color.White,
-                        focusedLabelColor =AccentBlue,
-                        unfocusedLabelColor = AccentBlue
-                    )
-                    , textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.poppinsregular)))
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Button(
-                    onClick = { onLoginClick(username, password) },
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                    colors = ButtonDefaults.buttonColors(containerColor = AccentBlue)
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(DarkSlate, DarkGrayBlue)
+                            )
+                        )
+                        .padding(verticalPadding, verticalPadding, verticalPadding, verticalPadding),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "Login",
-                        color = TextPrimary,
-                        fontFamily = FontFamily(Font(R.font.poppinsmedium)),
-                        fontSize = 16.sp
+                    Icon(
+                        imageVector = Icons.Default.Groups,
+                        contentDescription = "Admin Icon",
+                        tint = AccentBlue,
+                        modifier = Modifier.size(iconSize)
                     )
+
+                    Spacer(modifier = Modifier.height(spacerMedium))
+
+                    Text(
+                        text = "Member Login",
+                        fontSize = textSizeHeading,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary,
+                        fontFamily = FontFamily(Font(R.font.poppinsmedium))
+                    )
+
+                    Spacer(modifier = Modifier.height(spacerMedium))
+
+                    OutlinedTextField(
+                        value = username,
+                        onValueChange = { username = it },
+                        label = { Text("Member ID", fontFamily = FontFamily(Font(R.font.poppinsregular))) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            focusedContainerColor = DarkSlate,
+                            unfocusedContainerColor = DarkSlate,
+                            focusedIndicatorColor = Color.White,
+                            unfocusedIndicatorColor = Color.White,
+                            cursorColor = Color.White,
+                            focusedLabelColor = AccentBlue,
+                            unfocusedLabelColor = AccentBlue
+                        ),
+                        textStyle = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.poppinsregular)),
+                            fontSize = textFieldFontSize
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(spacerSmall))
+
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = { Text("Password", fontFamily = FontFamily(Font(R.font.poppinsregular))) },
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            focusedContainerColor = DarkSlate,
+                            unfocusedContainerColor = DarkSlate,
+                            focusedIndicatorColor = Color.White,
+                            unfocusedIndicatorColor = Color.White,
+                            cursorColor = Color.White,
+                            focusedLabelColor = AccentBlue,
+                            unfocusedLabelColor = AccentBlue
+                        ),
+                        textStyle = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.poppinsregular)),
+                            fontSize = textFieldFontSize
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(spacerMedium))
+
+                    Button(
+                        onClick = { onLoginClick(username, password) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height((screenWidth * 0.125f).dp)
+                            .clip(RoundedCornerShape(buttonCornerRadius)),
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentBlue)
+                    ) {
+                        Text(
+                            text = "Login",
+                            color = TextPrimary,
+                            fontFamily = FontFamily(Font(R.font.poppinsmedium)),
+                            fontSize = textSizeButton
+                        )
+                    }
                 }
             }
         }

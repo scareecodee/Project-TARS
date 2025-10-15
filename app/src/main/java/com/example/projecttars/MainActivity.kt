@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.ExperimentalAnimationApi
+import com.example.projecttars.ui.theme.ProjectTARSTheme
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 
@@ -20,7 +21,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val navController = rememberAnimatedNavController()
-            AppNavGraph(navController = navController)
+            ProjectTARSTheme(
+                activity = this,
+                content = {
+                    AppNavGraph(navController = navController)
+                }
+            )
         }
     }
 }

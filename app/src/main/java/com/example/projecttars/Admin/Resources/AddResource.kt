@@ -1,6 +1,5 @@
 package com.example.projecttars.Admin.Resources
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -20,11 +19,13 @@ import com.example.projecttars.ViewModels.NavigationData.ResourcesNavVM
 import com.example.projecttars.ui.theme.*
 import androidx.compose.runtime.collectAsState
 import com.example.projecttars.DataModels.TarsLabComponent
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEquipment(
-    heading: String="Add Equipment",
+    heading: String = "Add Equipment",
     onBackClick: () -> Unit,
     onSaveClick: (TarsLabComponent) -> Unit,
     resourcesNavVM: ResourcesNavVM
@@ -39,7 +40,6 @@ fun AddEquipment(
     var youtubeUrl by remember { mutableStateOf("") }
     var documentationUrl by remember { mutableStateOf("") }
 
-
     LaunchedEffect(selectedEquipment) {
         selectedEquipment?.let { equipment ->
             id = equipment.id
@@ -52,189 +52,224 @@ fun AddEquipment(
         }
     }
 
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        val screenWidth = maxWidth.value
+        val screenHeight = maxHeight.value
 
+        // Responsive dimensions
+        val padding = (screenWidth * 0.04f).dp
+        val textFieldSpacing = (screenWidth * 0.02f).dp
+        val previewHeight = (screenWidth * 0.45f).dp
+        val fabSize = (screenWidth * 0.14f).dp
+        val fontSizeHeading = (screenWidth * 0.05f).sp
 
-    Scaffold(
-        topBar = {
-           TopAppBar(
-                title = { Text(heading, fontSize = 20.sp, color = TextPrimary,fontFamily = FontFamily(Font(R.font.poppinsregular))) },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = TextPrimary
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            heading,
+                            fontSize = fontSizeHeading,
+                            color = TextPrimary,
+                            fontFamily = FontFamily(Font(R.font.poppinsregular))
                         )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkGrayBlue)
-            )
-        },
-        containerColor = DarkGrayBlue,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    val equipment = TarsLabComponent(
-                        id = id,
-                        name = name,
-                        imageUrl = imageUrl,
-                        description = description,
-                        available = available,
-                        youtubeUrl = youtubeUrl.ifBlank { null },
-                        documentationUrl = documentationUrl.ifBlank { null }
-                    )
-                    onSaveClick(equipment)
-                },
-                containerColor = AccentBlue
-            ) {
-                Icon(Icons.Default.Check, contentDescription = "Save", tint = TextPrimary)
-            }
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
-        ) {
-
-            // Name
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Name",fontFamily = FontFamily(Font(R.font.poppinsregular)), color = TextPrimary) },
-                leadingIcon = { Icon(Icons.Default.Description, contentDescription = "Name", tint = TextPrimary) },
-                textStyle = LocalTextStyle.current.copy(color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsmedium))),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = DarkSlate,
-                    unfocusedContainerColor = DarkSlate,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = AccentBlue,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Image URL
-            OutlinedTextField(
-                value = imageUrl,
-                onValueChange = { imageUrl = it },
-                label = { Text("Image URL", color = TextPrimary,fontFamily = FontFamily(Font(R.font.poppinsregular))) },
-                leadingIcon = { Icon(Icons.Default.Image, contentDescription = "Image URL", tint = TextPrimary) },
-                textStyle = LocalTextStyle.current.copy(color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsmedium))),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = DarkSlate,
-                    unfocusedContainerColor = DarkSlate,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = AccentBlue,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Preview Image
-            if (imageUrl.isNotBlank()) {
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp)
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBackClick) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Back",
+                                tint = TextPrimary
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkGrayBlue)
+                )
+            },
+            containerColor = DarkGrayBlue,
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        val equipment = TarsLabComponent(
+                            id = id,
+                            name = name,
+                            imageUrl = imageUrl,
+                            description = description,
+                            available = available,
+                            youtubeUrl = youtubeUrl.ifBlank { null },
+                            documentationUrl = documentationUrl.ifBlank { null }
+                        )
+                        onSaveClick(equipment)
+                    },
+                    containerColor = AccentBlue,
+                    modifier = Modifier.size(fabSize)
                 ) {
-                    AsyncImage(
-                        model = imageUrl,
-                        contentDescription = "Preview",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                    Icon(Icons.Default.Check, contentDescription = "Save", tint = TextPrimary)
+                }
+            }
+        ) { innerPadding ->
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(horizontal = padding),
+                verticalArrangement = Arrangement.Top
+            ) {
+                item {
+                    // Name
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = { Text("Name", fontFamily = FontFamily(Font(R.font.poppinsregular)), color = TextPrimary) },
+                        leadingIcon = { Icon(Icons.Default.Description, contentDescription = "Name", tint = TextPrimary) },
+                        textStyle = LocalTextStyle.current.copy(color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsmedium))),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = DarkSlate,
+                            unfocusedContainerColor = DarkSlate,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = AccentBlue,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White
+                        ),
+                        modifier = Modifier.fillMaxWidth()
                     )
+
+                    Spacer(modifier = Modifier.height(textFieldSpacing))
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                item {
+                    // Image URL
+                    OutlinedTextField(
+                        value = imageUrl,
+                        onValueChange = { imageUrl = it },
+                        label = { Text("Image URL", color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsregular))) },
+                        leadingIcon = { Icon(Icons.Default.Image, contentDescription = "Image URL", tint = TextPrimary) },
+                        textStyle = LocalTextStyle.current.copy(color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsmedium))),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = DarkSlate,
+                            unfocusedContainerColor = DarkSlate,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = AccentBlue,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(textFieldSpacing))
+                }
+
+                item {
+                    // Preview Image
+                    if (imageUrl.isNotBlank()) {
+                        Card(
+                            shape = RoundedCornerShape(padding),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(previewHeight)
+                        ) {
+                            AsyncImage(
+                                model = imageUrl,
+                                contentDescription = "Preview",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(textFieldSpacing))
+                    }
+                }
+
+                item {
+                    // Description
+                    OutlinedTextField(
+                        value = description,
+                        onValueChange = { description = it },
+                        label = { Text("Description", color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsregular))) },
+                        leadingIcon = { Icon(Icons.Default.Info, contentDescription = "Description", tint = TextPrimary) },
+                        maxLines = 4,
+                        textStyle = LocalTextStyle.current.copy(color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsmedium))),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = DarkSlate,
+                            unfocusedContainerColor = DarkSlate,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = AccentBlue,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(textFieldSpacing))
+                }
+
+                item {
+                    // Availability
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(
+                            checked = available,
+                            onCheckedChange = { available = it },
+                            colors = CheckboxDefaults.colors(checkedColor = AccentBlue, uncheckedColor = TextSecondary)
+                        )
+                        Spacer(modifier = Modifier.width(textFieldSpacing))
+                        Text("Available", color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsregular)))
+                    }
+
+                    Spacer(modifier = Modifier.height(textFieldSpacing))
+                }
+
+                item {
+                    // YouTube URL
+                    OutlinedTextField(
+                        value = youtubeUrl,
+                        onValueChange = { youtubeUrl = it },
+                        label = { Text("YouTube URL (optional)", color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsregular))) },
+                        leadingIcon = { Icon(Icons.Default.PlayArrow, contentDescription = "YouTube", tint = TextPrimary) },
+                        textStyle = LocalTextStyle.current.copy(color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsmedium))),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = DarkSlate,
+                            unfocusedContainerColor = DarkSlate,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = AccentBlue,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(textFieldSpacing))
+                }
+
+                item {
+                    // Documentation URL
+                    OutlinedTextField(
+                        value = documentationUrl,
+                        onValueChange = { documentationUrl = it },
+                        label = { Text("Documentation URL (optional)", color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsregular))) },
+                        leadingIcon = { Icon(Icons.Default.Description, contentDescription = "Documentation", tint = TextPrimary) },
+                        textStyle = LocalTextStyle.current.copy(color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsmedium))),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = DarkSlate,
+                            unfocusedContainerColor = DarkSlate,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = AccentBlue,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(textFieldSpacing))
+                }
             }
-
-            // Description
-            OutlinedTextField(
-                value = description,
-                onValueChange = { description = it },
-                label = { Text("Description", color = TextPrimary,fontFamily = FontFamily(Font(R.font.poppinsregular))) },
-                leadingIcon = { Icon(Icons.Default.Info, contentDescription = "Description", tint = TextPrimary,) },
-                maxLines = 4,
-                textStyle = LocalTextStyle.current.copy(color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsmedium))),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = DarkSlate,
-                    unfocusedContainerColor = DarkSlate,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = AccentBlue,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Availability
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(
-                    checked = available,
-                    onCheckedChange = { available = it },
-                    colors = CheckboxDefaults.colors(checkedColor = AccentBlue, uncheckedColor = TextSecondary)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Available", color = TextPrimary,fontFamily = FontFamily(Font(R.font.poppinsregular)))
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // YouTube URL
-            OutlinedTextField(
-                value = youtubeUrl,
-                onValueChange = { youtubeUrl = it },
-                label = { Text("YouTube URL (optional)", color = TextPrimary,fontFamily = FontFamily(Font(R.font.poppinsregular))) },
-                leadingIcon = { Icon(Icons.Default.PlayArrow, contentDescription = "YouTube", tint = TextPrimary) },
-                textStyle = LocalTextStyle.current.copy(color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsmedium))),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = DarkSlate,
-                    unfocusedContainerColor = DarkSlate,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = AccentBlue,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Documentation URL
-            OutlinedTextField(
-                value = documentationUrl,
-                onValueChange = { documentationUrl = it },
-                label = { Text("Documentation URL (optional)", color = TextPrimary,fontFamily = FontFamily(Font(R.font.poppinsregular))) },
-                leadingIcon = { Icon(Icons.Default.Description, contentDescription = "Documentation", tint = TextPrimary) },
-                textStyle = LocalTextStyle.current.copy(color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsmedium))),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = DarkSlate,
-                    unfocusedContainerColor = DarkSlate,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = AccentBlue,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
         }
     }
 }

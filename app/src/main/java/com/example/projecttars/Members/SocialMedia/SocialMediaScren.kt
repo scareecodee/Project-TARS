@@ -1,27 +1,24 @@
 package com.example.projecttars.Members.SocialMedia
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.draw.clip
 import com.example.projecttars.ui.theme.*
 import com.example.projecttars.R
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.sp
 import com.example.projecttars.DataModels.SocialMediaHandle
-
 
 @Composable
 fun SocialMediaScreen(
@@ -43,62 +40,81 @@ fun SocialMediaScreen(
         SocialMediaHandle("Gmail", "mailto:tars.society@gmail.com", Icons.Default.Email, AccentBlue)
     )
 
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .background(DarkGrayBlue)
             .systemBarsPadding()
     ) {
+        val screenWidth = maxWidth
+        val screenHeight = maxHeight
+
+        // Dynamic sizing
+        val horizontalPadding = screenWidth * 0.04f
+        val verticalPadding = screenHeight * 0.02f
+        val headerFontSize = (screenWidth * 0.07f)
+        val cardCornerRadius = screenWidth * 0.05f
+        val cardElevation = screenWidth * 0.02f
+        val iconBoxSize = screenWidth * 0.12f
+        val iconSize = screenWidth * 0.06f
+        val spacerWidth = screenWidth * 0.04f
+        val nameFontSize = (screenWidth * 0.045f)
+        val urlFontSize = (screenWidth * 0.035f)
+        val cardPadding = screenWidth * 0.04f
+        val rowPadding = screenWidth * 0.04f
+        val fabSize = screenWidth * 0.14f
+        val fabPadding = screenWidth * 0.05f
+
         Column(modifier = Modifier.fillMaxSize()) {
             // Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp)
+                    .padding(horizontal = horizontalPadding, vertical = verticalPadding)
             ) {
                 IconButton(onClick = onBackClick) {
                     Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextPrimary)
                 }
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(horizontalPadding))
                 Text(
                     text = "TARS Social Handles",
                     color = TextPrimary,
-                    fontSize = 28.sp,
+                    fontSize = headerFontSize.value.sp,
                     fontFamily = FontFamily(Font(R.font.poppinsregular))
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(verticalPadding / 2))
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 80.dp) // leave space for FAB
+                contentPadding = PaddingValues(bottom = screenHeight * 0.1f)
             ) {
                 items(socialHandles.size) { index ->
                     val handle = socialHandles[index]
 
                     Card(
                         colors = CardDefaults.cardColors(containerColor = DarkSlate),
-                        shape = RoundedCornerShape(20.dp),
+                        shape = RoundedCornerShape(cardCornerRadius),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .clip(RoundedCornerShape(20.dp))
+                            .padding(horizontal = horizontalPadding, vertical = verticalPadding / 2)
+                            .clip(RoundedCornerShape(cardCornerRadius))
                             .clickable { uriHandler.openUri(handle.url) },
-                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                        elevation = CardDefaults.cardElevation(defaultElevation = cardElevation)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier.padding(rowPadding)
                         ) {
                             // Icon Box
                             Box(
                                 modifier = Modifier
-                                    .size(50.dp)
+                                    .size(iconBoxSize)
                                     .background(
                                         handle.color.copy(alpha = 0.2f),
-                                        shape = RoundedCornerShape(12.dp)
+                                        shape = RoundedCornerShape(cardCornerRadius / 2)
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -106,35 +122,34 @@ fun SocialMediaScreen(
                                     handle.icon,
                                     contentDescription = handle.name,
                                     tint = handle.color,
-                                    modifier = Modifier.size(28.dp)
+                                    modifier = Modifier.size(iconSize)
                                 )
                             }
 
-                            Spacer(modifier = Modifier.width(16.dp))
+                            Spacer(modifier = Modifier.width(spacerWidth))
 
                             Column {
                                 Text(
                                     text = handle.name,
                                     fontFamily = FontFamily(Font(R.font.poppinsmedium)),
                                     color = TextPrimary,
-                                    fontSize = 18.sp
+                                    fontSize = nameFontSize.value.sp
                                 )
-                                Spacer(modifier = Modifier.height(4.dp))
+                                Spacer(modifier = Modifier.height(verticalPadding / 4))
                                 Text(
                                     text = handle.url,
                                     fontFamily = FontFamily(Font(R.font.poppinsregular)),
                                     color = TextSecondary,
-                                    fontSize = 14.sp
+                                    fontSize = urlFontSize.value.sp
                                 )
                             }
                         }
                     }
                 }
 
-                item { Spacer(modifier = Modifier.height(16.dp)) }
+                item { Spacer(modifier = Modifier.height(verticalPadding)) }
             }
         }
-
 
         if (isAdmin) {
             FloatingActionButton(
@@ -142,11 +157,11 @@ fun SocialMediaScreen(
                 containerColor = AccentBlue,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(20.dp)
+                    .padding(fabPadding)
+                    .size(fabSize)
             ) {
                 Icon(Icons.Default.Edit, contentDescription = "Edit", tint = TextPrimary)
             }
         }
     }
 }
-

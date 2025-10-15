@@ -84,10 +84,8 @@ fun AdminMainScreen(navController: NavHostController,resourcesVM: ResourcesVM,re
                     }
                 )
                 "profile" -> AdminProfileScreen (
-                    onEditProfileClick = { /*TODO*/ },
                     onLogoutClick = { /*TODO*/ },
                     onNotificationsViewClick = { navController.navigate("AdminNotificationScreen") },
-                    onViewMessageClick = { /*TODO*/ }
                 )
             }
         }

@@ -1,31 +1,26 @@
 package com.example.projecttars.Members.Profile
 
-
-import androidx.compose.material.icons.filled.ArrowBack
-
-
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.projecttars.DataModels.NotificationItem
 import com.example.projecttars.R
 import com.example.projecttars.ui.theme.*
-
-import androidx.compose.material.icons.filled.Send
-
 
 @Composable
 fun NotificationScreen(
@@ -34,6 +29,23 @@ fun NotificationScreen(
     isAdmin: Boolean = false,
     onSendNotificationClick: (() -> Unit)? = null
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
+    val density = LocalDensity.current
+
+    // Responsive sizes
+    val paddingHorizontal = (screenWidth * 0.04).dp
+    val paddingVertical = (screenHeight * 0.02).dp
+    val iconSize = (screenWidth * 0.1).dp
+    val spacerSmall = (screenHeight * 0.01).dp
+    val spacerMedium = (screenHeight * 0.02).dp
+    val textSizeTitle = (screenWidth * 0.045).sp
+    val textSizeDescription = (screenWidth * 0.035).sp
+    val textSizeDate = (screenWidth * 0.03).sp
+    val cardCorner = (screenWidth * 0.04).dp
+    val fabPadding = (screenWidth * 0.05).dp
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -42,54 +54,52 @@ fun NotificationScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
 
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp)
+                    .padding(horizontal = paddingHorizontal, vertical = paddingVertical)
             ) {
                 IconButton(onClick = onBackClick) {
                     Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextPrimary)
                 }
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(paddingHorizontal))
                 Text(
                     text = "Notifications",
                     color = TextPrimary,
-                    fontSize = 28.sp,
+                    fontSize = (screenWidth * 0.07).sp,
                     fontFamily = FontFamily(Font(R.font.poppinsregular))
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
+            Spacer(modifier = Modifier.height(spacerSmall))
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 80.dp) // leave space for FAB
+                contentPadding = PaddingValues(bottom = fabPadding)
             ) {
                 items(notifications.size) { index ->
                     val item = notifications[index]
 
                     Card(
                         colors = CardDefaults.cardColors(containerColor = DarkSlate),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(cardCorner),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                            .padding(horizontal = paddingHorizontal, vertical = spacerSmall),
                         elevation = CardDefaults.cardElevation(8.dp)
                     ) {
                         Row(
                             verticalAlignment = Alignment.Top,
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier.padding(paddingHorizontal)
                         ) {
                             // Icon with background
                             Box(
                                 modifier = Modifier
-                                    .size(40.dp)
+                                    .size(iconSize)
                                     .background(
                                         AccentBlue.copy(alpha = 0.2f),
-                                        shape = RoundedCornerShape(12.dp)
+                                        shape = RoundedCornerShape(cardCorner)
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -100,38 +110,37 @@ fun NotificationScreen(
                                 )
                             }
 
-                            Spacer(modifier = Modifier.width(16.dp))
+                            Spacer(modifier = Modifier.width(paddingHorizontal))
 
                             Column(modifier = Modifier.fillMaxWidth()) {
                                 Text(
                                     text = item.title,
                                     fontFamily = FontFamily(Font(R.font.poppinsmedium)),
                                     color = TextPrimary,
-                                    fontSize = 18.sp
+                                    fontSize = textSizeTitle
                                 )
-                                Spacer(modifier = Modifier.height(4.dp))
+                                Spacer(modifier = Modifier.height(spacerSmall))
                                 Text(
                                     text = item.description,
                                     fontFamily = FontFamily(Font(R.font.poppinsregular)),
                                     color = TextSecondary,
-                                    fontSize = 14.sp
+                                    fontSize = textSizeDescription
                                 )
-                                Spacer(modifier = Modifier.height(6.dp))
+                                Spacer(modifier = Modifier.height(spacerSmall))
                                 Text(
                                     text = item.date,
                                     fontFamily = FontFamily(Font(R.font.poppinsitalic)),
                                     color = TextSecondary,
-                                    fontSize = 12.sp
+                                    fontSize = textSizeDate
                                 )
                             }
                         }
                     }
                 }
 
-                item { Spacer(modifier = Modifier.height(16.dp)) }
+                item { Spacer(modifier = Modifier.height(spacerMedium)) }
             }
         }
-
 
         if (isAdmin) {
             FloatingActionButton(
@@ -139,11 +148,10 @@ fun NotificationScreen(
                 containerColor = AccentBlue,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(20.dp)
+                    .padding(fabPadding)
             ) {
                 Icon(Icons.Default.Edit, contentDescription = "Send Notification", tint = TextPrimary)
             }
         }
     }
 }
-

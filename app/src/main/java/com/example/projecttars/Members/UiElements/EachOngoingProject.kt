@@ -1,3 +1,4 @@
+// OngoingProjectCard.kt
 package com.example.projecttars.Members.UiElements
 
 import androidx.compose.foundation.Image
@@ -21,25 +22,36 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.projecttars.R
 import com.example.projecttars.ui.theme.DarkSlate
+import com.example.projecttars.ui.theme.DarkCharcoal
 import com.example.projecttars.ui.theme.TextPrimary
 import com.example.projecttars.ui.theme.TextSecondary
-import com.example.projecttars.ui.theme.DarkCharcoal
-
 
 @Composable
 fun OngoingProjectCard(
-    imageUrl:String,
+    imageUrl: String,
     title: String,
     shortDescription: String,
-    onViewDetail: () -> Unit
+    onViewDetail: () -> Unit,
+    screenWidth: Float,
+    screenHeight: Float
 ) {
+    // Dynamic sizes
+    val cardPadding = (screenWidth * 0.03f).dp
+    val cornerRadius = (screenWidth * 0.04f).dp
+    val imageHeight = (screenHeight * 0.27f).dp
+    val spacerSmall = (screenHeight * 0.01f).dp
+    val spacerMedium = (screenHeight * 0.015f).dp
+    val titleFont = (screenWidth * 0.045f).sp
+    val descFont = (screenWidth * 0.035f).sp
+    val buttonPadding = (screenWidth * 0.02f).dp
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
-            .clip(RoundedCornerShape(16.dp)),
+            .padding(cardPadding)
+            .clip(RoundedCornerShape(cornerRadius)),
         colors = CardDefaults.cardColors(containerColor = DarkCharcoal),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = (screenWidth * 0.01f).dp)
     ) {
         Box(
             modifier = Modifier
@@ -48,62 +60,64 @@ fun OngoingProjectCard(
                         colors = listOf(DarkCharcoal, DarkSlate)
                     )
                 )
-                .padding(12.dp)
+                .padding(cardPadding)
         ) {
             Column {
-                // Project image
-                if(imageUrl.isNotEmpty()){
+                if (imageUrl.isNotEmpty()) {
                     AsyncImage(
                         model = imageUrl,
                         contentDescription = "Ongoing Project Image",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(180.dp)
-                            .clip(RoundedCornerShape(12.dp))
+                            .height(imageHeight)
+                            .clip(RoundedCornerShape(cornerRadius))
                     )
-                }else{
+                } else {
                     Image(
                         painter = painterResource(id = R.drawable.tarslogo),
                         contentDescription = "Ongoing Project Image",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(180.dp)
-                            .clip(RoundedCornerShape(12.dp))
+                            .height(imageHeight)
+                            .clip(RoundedCornerShape(cornerRadius))
                     )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+
+                Spacer(modifier = Modifier.height(spacerSmall))
+
                 Text(
                     text = title,
-                    fontSize = 18.sp,
+                    fontSize = titleFont,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
                     fontFamily = FontFamily(Font(R.font.poppinsbold))
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
-
+                Spacer(modifier = Modifier.height(spacerSmall))
 
                 Text(
                     text = shortDescription,
-                    fontSize = 14.sp,
+                    fontSize = descFont,
                     color = TextSecondary,
                     maxLines = 3,
                     fontFamily = FontFamily(Font(R.font.poppinsitalic))
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(spacerMedium))
 
                 Button(
                     onClick = onViewDetail,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4C566A)),
-                    modifier = Modifier.align(Alignment.End)
+                    modifier = Modifier.align(Alignment.End),
+                    shape = RoundedCornerShape(cornerRadius)
                 ) {
                     Text(
                         text = "View Progress",
                         fontFamily = FontFamily(Font(R.font.poppinsregular)),
-                        color = TextPrimary
+                        color = TextPrimary,
+                        fontSize = descFont
                     )
                 }
             }

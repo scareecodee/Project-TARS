@@ -1,4 +1,5 @@
 package com.example.projecttars.Members.UiElements
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,9 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.projecttars.DataModels.CompletedProjectDetail
 import com.example.projecttars.R
-
 
 @Composable
 fun CompletedProjectCard(
@@ -30,90 +29,108 @@ fun CompletedProjectCard(
     shortDescription: String,
     onViewDetail: () -> Unit
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-            .clip(RoundedCornerShape(20.dp)),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp) // stronger shadow
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Box(
+        val screenWidth = maxWidth.value
+        val screenHeight = maxHeight.value
+
+        // Dynamic sizes
+        val cardPadding = (screenWidth * 0.03f).dp
+        val cardCorner = (screenWidth * 0.05f).dp
+        val cardElevation = (screenWidth * 0.01f).dp
+        val imageHeight = (screenHeight * 0.17f).dp
+        val spacerHeight1 = (screenHeight * 0.02f).dp
+        val spacerHeight2 = (screenHeight * 0.009f).dp
+        val spacerHeight3 = (screenHeight * 0.015f).dp
+        val titleFontSize = (screenWidth * 0.05f).sp
+        val descriptionFontSize = (screenWidth * 0.035f).sp
+        val buttonCorner = (screenWidth * 0.03f).dp
+
+        Card(
             modifier = Modifier
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFF2A2D3E).copy(alpha = 0.9f),
-                            Color(0xFF1E2029).copy(alpha = 0.95f)
+                .fillMaxWidth()
+                .padding(cardPadding)
+                .clip(RoundedCornerShape(cardCorner)),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.Transparent
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = cardElevation)
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0xFF2A2D3E).copy(alpha = 0.9f),
+                                Color(0xFF1E2029).copy(alpha = 0.95f)
+                            )
                         )
                     )
-                )
-                .border(
-                    width = 1.dp,
-                    color = Color.White.copy(alpha = 0.1f), // glassy border
-                    shape = RoundedCornerShape(20.dp)
-                )
-                .padding(16.dp)
-        ) {
-            Column {
-                if(imageUrl.isEmpty()){
-                    Image(
-                        painter = painterResource(id =R.drawable.tarslogo),
-                        contentDescription = "Project Image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(180.dp)
-                            .clip(RoundedCornerShape(16.dp))
+                    .border(
+                        width = (screenWidth * 0.003f).dp,
+                        color = Color.White.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(cardCorner)
                     )
-                }else{
-                    AsyncImage(
-                        model = imageUrl,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(180.dp)
-                            .clip(RoundedCornerShape(16.dp)),
-                    )
-                }
+                    .padding(cardPadding)
+            ) {
+                Column {
+                    if (imageUrl.isEmpty()) {
+                        Image(
+                            painter = painterResource(id = R.drawable.tarslogo),
+                            contentDescription = "Project Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(imageHeight)
+                                .clip(RoundedCornerShape(cardCorner))
+                        )
+                    } else {
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(imageHeight)
+                                .clip(RoundedCornerShape(cardCorner)),
+                        )
+                    }
 
+                    Spacer(modifier = Modifier.height(spacerHeight1))
 
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Text(
-                    text = title,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    fontFamily = FontFamily(Font(R.font.poppinsbold))
-                )
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Text(
-                    text = shortDescription,
-                    fontSize = 14.sp,
-                    color = Color.LightGray.copy(alpha = 0.9f),
-                    maxLines = 3,
-                    fontFamily = FontFamily(Font(R.font.poppinsregular))
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Button(
-                    onClick = onViewDetail,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4C566A)), // sleek bluish-gray
-                    modifier = Modifier.align(Alignment.End),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
                     Text(
-                        text = "View Detail",
-                        fontFamily = FontFamily(Font(R.font.poppinsmedium)),
-                        color = Color.White
+                        text = title,
+                        fontSize = titleFontSize,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        fontFamily = FontFamily(Font(R.font.poppinsbold))
                     )
+
+                    Spacer(modifier = Modifier.height(spacerHeight2))
+
+                    Text(
+                        text = shortDescription,
+                        fontSize = descriptionFontSize,
+                        color = Color.LightGray.copy(alpha = 0.9f),
+                        maxLines = 3,
+                        fontFamily = FontFamily(Font(R.font.poppinsregular))
+                    )
+
+                    Spacer(modifier = Modifier.height(spacerHeight3))
+
+                    Button(
+                        onClick = onViewDetail,
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4C566A)),
+                        modifier = Modifier.align(Alignment.End),
+                        shape = RoundedCornerShape(buttonCorner)
+                    ) {
+                        Text(
+                            text = "View Detail",
+                            fontFamily = FontFamily(Font(R.font.poppinsmedium)),
+                            color = Color.White
+                        )
+                    }
                 }
             }
         }

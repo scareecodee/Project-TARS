@@ -1,5 +1,5 @@
 package com.example.projecttars.Members.Projects.Ongoing
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,15 +12,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.projecttars.DataModels.OngoingProjectDetail
+import com.example.projecttars.Members.Projects.Completed.CardSection
 import com.example.projecttars.R
 import com.example.projecttars.ui.theme.*
 
@@ -34,66 +35,89 @@ fun OngoingProjectDetailScreen(
 ) {
     val uriHandler = LocalUriHandler.current
 
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .background(DarkGrayBlue)
             .systemBarsPadding()
     ) {
+        val screenWidth = maxWidth.value
+        val screenHeight = maxHeight.value
+
+        // Dynamic sizes
+        val cardCornerRadius = (screenWidth * 0.057f).dp
+        val spacerHeight = (screenHeight * 0.015f).dp
+        val fabSize = (screenWidth * 0.14f).dp
+        val horizontalPadding = (screenWidth * 0.04f).dp
+        val verticalPadding = (screenHeight * 0.02f).dp
+        val cardHeight = (screenHeight * 0.25f).dp
+        val iconSize = (screenWidth * 0.07f).dp
+        val headingFontSize = (screenWidth * 0.07f).sp
+        val spacerHeight1 = (screenHeight * 0.02f).dp
+        val cardSectionCorner = (screenWidth * 0.04f).dp
+        val cardSectionElevation = (screenWidth * 0.01f).dp
+        val cardSectionIconSize = (screenWidth * 0.07f).dp
+        val cardSectionTitleFont = (screenWidth * 0.045f).sp
+        val cardSectionContentFont = (screenWidth * 0.035f).sp
+
         Column(modifier = Modifier.fillMaxSize()) {
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp)
+                    .padding(horizontal = horizontalPadding, vertical = verticalPadding)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = TextPrimary,
+                            modifier = Modifier.size(iconSize)
+                        )
                     }
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(horizontalPadding / 2))
 
                     Text(
                         text = "Project Details",
                         color = TextPrimary,
-                        fontSize = 28.sp,
+                        fontSize = headingFontSize,
                         fontFamily = FontFamily(Font(R.font.poppinsregular))
                     )
                 }
-
 
                 if (isAdmin && onDeleteClick != null) {
                     IconButton(onClick = onDeleteClick) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete Project",
-                            tint = MaterialTheme.colorScheme.error
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(iconSize)
                         )
                     }
                 }
             }
 
-
             Card(
-                shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(cardCornerRadius),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp)
-                    .padding(horizontal = 16.dp),
-                elevation = CardDefaults.cardElevation(12.dp)
+                    .height(cardHeight)
+                    .padding(horizontal = horizontalPadding),
+                elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
             ) {
-               AsyncImage(
-                   model = project.imageUrl,
-                   contentDescription = "Project Image",
-                   contentScale = ContentScale.Crop,
-                   modifier = Modifier.fillMaxSize()
-               )
+                AsyncImage(
+                    model = project.imageUrl,
+                    contentDescription = "Project Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
+            Spacer(modifier = Modifier.height(spacerHeight))
 
             project.youtubeUrl?.let { url ->
                 Button(
@@ -101,11 +125,15 @@ fun OngoingProjectDetailScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    shape = RoundedCornerShape(16.dp)
+                        .padding(horizontal = horizontalPadding),
+                    shape = RoundedCornerShape(cardCornerRadius)
                 ) {
-                    Icon(Icons.Default.PlayArrow, contentDescription = "YouTube", tint = TextPrimary)
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        Icons.Default.PlayArrow,
+                        contentDescription = "YouTube",
+                        tint = TextPrimary
+                    )
+                    Spacer(modifier = Modifier.width(horizontalPadding / 2))
                     Text(
                         text = "Watch Demo",
                         color = TextPrimary,
@@ -114,33 +142,89 @@ fun OngoingProjectDetailScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
+            Spacer(modifier = Modifier.height(spacerHeight))
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 80.dp)
+                contentPadding = PaddingValues(bottom = fabSize)
             ) {
                 item {
                     Text(
                         text = project.name,
                         color = TextPrimary,
-                        fontSize = 24.sp,
+                        fontSize = headingFontSize,
                         fontFamily = FontFamily(Font(R.font.poppinsbold)),
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        modifier = Modifier.padding(
+                            horizontal = horizontalPadding,
+                            vertical = verticalPadding
+                        )
                     )
                 }
 
-                item { CardSection(Icons.Default.Person, "Developers", project.developers.joinToString(", ")) }
-                item { CardSection(Icons.Default.School, "Guided By", project.guidedBy.joinToString(", ")) }
-                item { CardSection(Icons.Default.Build, "Equipment Used", project.equipmentUsed.joinToString(", ")) }
-                item { CardSection(Icons.Default.Code, "Tech Stack", project.techStack.joinToString(", ")) }
-                item { CardSection(Icons.Default.HelpOutline, "Problem Solved", project.problemSolved) }
-
-                item { Spacer(modifier = Modifier.height(16.dp)) }
+                item {
+                    CardSection(
+                        icon = Icons.Default.Person,
+                        title = "Developers",
+                        content = project.developers.joinToString(", "),
+                        cornerRadius = cardSectionCorner,
+                        elevation = cardSectionElevation,
+                        iconSize = cardSectionIconSize,
+                        titleFontSize = cardSectionTitleFont,
+                        contentFontSize = cardSectionContentFont
+                    )
+                }
+                item {
+                    CardSection(
+                        icon = Icons.Default.School,
+                        title = "Guided By",
+                        content = project.guidedBy.joinToString(", "),
+                        cornerRadius = cardSectionCorner,
+                        elevation = cardSectionElevation,
+                        iconSize = cardSectionIconSize,
+                        titleFontSize = cardSectionTitleFont,
+                        contentFontSize = cardSectionContentFont
+                    )
+                }
+                item {
+                    CardSection(
+                        icon = Icons.Default.Build,
+                        title = "Equipment Used",
+                        content = project.equipmentUsed.joinToString(", "),
+                        cornerRadius = cardSectionCorner,
+                        elevation = cardSectionElevation,
+                        iconSize = cardSectionIconSize,
+                        titleFontSize = cardSectionTitleFont,
+                        contentFontSize = cardSectionContentFont
+                    )
+                }
+                item {
+                    CardSection(
+                        icon = Icons.Default.Code,
+                        title = "Tech Stack",
+                        content = project.techStack.joinToString(", "),
+                        cornerRadius = cardSectionCorner,
+                        elevation = cardSectionElevation,
+                        iconSize = cardSectionIconSize,
+                        titleFontSize = cardSectionTitleFont,
+                        contentFontSize = cardSectionContentFont
+                    )
+                }
+                item {
+                    CardSection(
+                        icon = Icons.Default.HelpOutline,
+                        title = "Problem Solved",
+                        content = project.problemSolved,
+                        cornerRadius = cardSectionCorner,
+                        elevation = cardSectionElevation,
+                        iconSize = cardSectionIconSize,
+                        titleFontSize = cardSectionTitleFont,
+                        contentFontSize = cardSectionContentFont
+                    )
+                }
+                item { Spacer(modifier = Modifier.height(spacerHeight1)) }
             }
-        }
 
+        }
 
         if (isAdmin) {
             if (onEditClick != null) {
@@ -148,40 +232,18 @@ fun OngoingProjectDetailScreen(
                     onClick = onEditClick,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(16.dp),
+                        .padding(horizontalPadding, verticalPadding),
                     containerColor = AccentBlue,
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(cardCornerRadius/1.2f),
+                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 8.dp)
                 ) {
-                    Icon(Icons.Default.Edit, contentDescription = "Edit Project", tint = Color.White)
+                    Icon(
+                        Icons.Default.Edit,
+                        contentDescription = "Edit Project",
+                        tint = Color.White,
+                        modifier = Modifier.size(iconSize)
+                    )
                 }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun CardSection(
-    icon: ImageVector,
-    title: String,
-    content: String,
-    textColor: Color = TextPrimary,
-    cardColor: Color = DarkSlate
-) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = cardColor),
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, contentDescription = title, tint = AccentPurple, modifier = Modifier.size(24.dp))
-            Spacer(modifier = Modifier.width(12.dp))
-            Column {
-                Text(text = title, fontFamily = FontFamily(Font(R.font.poppinsmedium)), color = textColor, fontSize = 16.sp)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = content, fontFamily = FontFamily(Font(R.font.poppinsregular)), color = TextSecondary, fontSize = 14.sp)
             }
         }
     }

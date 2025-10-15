@@ -1,8 +1,5 @@
 package com.example.projecttars.Admin.Profile
 
-import androidx.compose.ui.graphics.Color
-
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -25,6 +23,19 @@ fun SendNotificationScreen(
     onBackClick: () -> Unit,
     onSendClick: (title: String, description: String) -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
+
+    // Responsive sizes
+    val paddingHorizontal = (screenWidth * 0.04).dp
+    val paddingVertical = (screenHeight * 0.02).dp
+    val spacerSmall = (screenHeight * 0.02).dp
+    val textSizeHeading = (screenWidth * 0.07).sp
+    val textFieldHeight = (screenHeight * 0.2).dp
+    val fabPadding = (screenWidth * 0.05).dp
+    val textFieldCorner = (screenWidth * 0.04).dp
+
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
@@ -37,29 +48,28 @@ fun SendNotificationScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = paddingHorizontal)
         ) {
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp)
+                    .padding(vertical = paddingVertical)
             ) {
                 IconButton(onClick = onBackClick) {
                     Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextPrimary)
                 }
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(paddingHorizontal))
                 Text(
                     text = "Send Notification",
                     color = TextPrimary,
-                    fontSize = 28.sp,
+                    fontSize = textSizeHeading,
                     fontFamily = FontFamily(Font(R.font.poppinsregular))
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
+            Spacer(modifier = Modifier.height(spacerSmall))
 
             OutlinedTextField(
                 value = title,
@@ -68,19 +78,18 @@ fun SendNotificationScreen(
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = DarkSlate,
                     unfocusedContainerColor = DarkSlate,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                    unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
                     cursorColor = AccentBlue,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
+                    focusedTextColor = TextPrimary,
+                    unfocusedTextColor = TextPrimary
                 ),
                 textStyle = LocalTextStyle.current.copy(color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsmedium))),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(textFieldCorner),
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
+            Spacer(modifier = Modifier.height(spacerSmall))
 
             OutlinedTextField(
                 value = description,
@@ -89,22 +98,21 @@ fun SendNotificationScreen(
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = DarkSlate,
                     unfocusedContainerColor = DarkSlate,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                    unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
                     cursorColor = AccentBlue,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
+                    focusedTextColor = TextPrimary,
+                    unfocusedTextColor = TextPrimary
                 ),
                 textStyle = LocalTextStyle.current.copy(color = TextPrimary, fontFamily = FontFamily(Font(R.font.poppinsmedium))),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(textFieldCorner),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(150.dp),
+                    .height(textFieldHeight),
                 singleLine = false,
                 maxLines = 5
             )
         }
-
 
         FloatingActionButton(
             onClick = {
@@ -115,7 +123,7 @@ fun SendNotificationScreen(
             containerColor = AccentBlue,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(20.dp)
+                .padding(fabPadding)
         ) {
             Icon(Icons.Default.Send, contentDescription = "Send Notification", tint = TextPrimary)
         }

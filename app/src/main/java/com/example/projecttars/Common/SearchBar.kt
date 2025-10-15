@@ -24,7 +24,7 @@ import com.example.projecttars.ui.theme.AccentBlue
 import com.example.projecttars.ui.theme.DarkSlate
 
 enum class FilterType {
-    NAME, DOMAIN,ID
+    NAME, DOMAIN, ID
 }
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -39,28 +39,44 @@ fun SearchBar(
     var expanded by remember { mutableStateOf(false) }
 
     BoxWithConstraints {
-        val horizontalPadding = maxWidth * 0.025f
+        // Responsive base values based on screen width and height
+        val hPadding = maxWidth * 0.025f          // ~10.dp at 400dp width
+        val containerHeight = maxHeight * 0.08f    // ~56.dp typical bar height
+        val cornerRadius = maxWidth * 0.075f       // ~30.dp at 400dp width
+        val borderThickness = maxWidth * 0.00125f  // ~0.5.dp
+        val iconSize = maxWidth * 0.06f            // ~24.dp
+        val spacerWidth = maxWidth * 0.02f         // ~8.dp
+        val textFieldFont = maxWidth.value * 0.035f // ~14.sp
+        val placeholderFont = maxWidth.value * 0.03f // ~12.sp
+        val dropdownFont = maxWidth.value * 0.037f  // ~15.sp
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = horizontalPadding)
-                .height(56.dp)
+                .padding(horizontal = hPadding)
+                .height(containerHeight)
                 .background(
                     DarkSlate,
-                    RoundedCornerShape(30.dp)
+                    RoundedCornerShape(cornerRadius)
                 )
-                .border(0.5.dp, AccentBlue, RoundedCornerShape(30.dp))
-                .padding(horizontal = horizontalPadding)
+                .border(
+                    borderThickness,
+                    AccentBlue,
+                    RoundedCornerShape(cornerRadius)
+                )
+                .padding(horizontal = hPadding)
         ) {
+            // Search Icon
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = "Search Icon",
-                tint =AccentBlue
+                tint = AccentBlue
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(spacerWidth))
 
+            // Search Field
             TextField(
                 value = query,
                 onValueChange = { onQueryChange(it) },
@@ -69,9 +85,9 @@ fun SearchBar(
                         when (selectedFilter) {
                             FilterType.NAME -> "Search by name..."
                             FilterType.ID -> "Search by id..."
-                            FilterType.DOMAIN -> "Search by non domain..."
+                            FilterType.DOMAIN -> "Search by domain..."
                         },
-                        fontSize = 12.sp,
+                        fontSize = placeholderFont.sp,
                         fontFamily = FontFamily(Font(R.font.poppinsitalic)),
                         color = Color.LightGray
                     )
@@ -87,35 +103,34 @@ fun SearchBar(
                     unfocusedTextColor = Color.White
                 ),
                 textStyle = TextStyle(
-                    fontSize = 14.sp,
+                    fontSize = textFieldFont.sp,
                     fontFamily = FontFamily(Font(R.font.poppinsmedium)),
                     color = Color.White
                 ),
                 singleLine = true
             )
 
+            // Filter Dropdown
             Box {
                 Icon(
                     imageVector = Icons.Default.FilterList,
                     contentDescription = "Filter Icon",
                     tint = AccentBlue,
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(iconSize)
                         .clickable { expanded = true }
                 )
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
                     modifier = Modifier
-                        .background(
-                            color = DarkSlate,
-                        )
+                        .background(color = DarkSlate)
                 ) {
                     DropdownMenuItem(
                         text = {
                             Text(
                                 "Name",
-                                fontSize = 15.sp,
+                                fontSize = dropdownFont.sp,
                                 color = AccentBlue,
                                 fontFamily = FontFamily(Font(R.font.poppinsmedium))
                             )
@@ -130,7 +145,7 @@ fun SearchBar(
                             Text(
                                 "Domain",
                                 color = AccentBlue,
-                                fontSize = 15.sp,
+                                fontSize = dropdownFont.sp,
                                 fontFamily = FontFamily(Font(R.font.poppinsmedium))
                             )
                         },
@@ -144,7 +159,7 @@ fun SearchBar(
                             Text(
                                 "ID",
                                 color = AccentBlue,
-                                fontSize = 15.sp,
+                                fontSize = dropdownFont.sp,
                                 fontFamily = FontFamily(Font(R.font.poppinsmedium))
                             )
                         },
