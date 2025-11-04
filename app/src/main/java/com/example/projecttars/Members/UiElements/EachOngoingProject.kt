@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -75,7 +76,7 @@ fun OngoingProjectCard(
                     )
                 } else {
                     Image(
-                        painter = painterResource(id = R.drawable.tarslogo),
+                        painter = painterResource(id = R.drawable.tarsapplogo_foreground),
                         contentDescription = "Ongoing Project Image",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -101,7 +102,8 @@ fun OngoingProjectCard(
                     text = shortDescription,
                     fontSize = descFont,
                     color = TextSecondary,
-                    maxLines = 3,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                     fontFamily = FontFamily(Font(R.font.poppinsitalic))
                 )
 

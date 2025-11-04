@@ -54,6 +54,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.compose.runtime.livedata)
+    implementation(libs.androidx.core.splashscreen)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -73,7 +75,8 @@ dependencies {
 
     implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
 
-
+// DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
 
 

@@ -102,7 +102,7 @@ fun AdminResCard(
                     )
                 } else {
                     Image(
-                        painter = painterResource(id = R.drawable.tarslogo),
+                        painter = painterResource(id = R.drawable.tarsapplogo_foreground),
                         contentDescription = "Default Logo",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

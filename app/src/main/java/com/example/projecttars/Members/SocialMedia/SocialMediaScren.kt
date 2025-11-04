@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import com.example.projecttars.ui.theme.*
 import com.example.projecttars.R
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import com.example.projecttars.DataModels.SocialMediaHandle
 
@@ -52,7 +53,7 @@ fun SocialMediaScreen(
         // Dynamic sizing
         val horizontalPadding = screenWidth * 0.04f
         val verticalPadding = screenHeight * 0.02f
-        val headerFontSize = (screenWidth * 0.07f)
+        val headerFontSize = (screenWidth * 0.06f)
         val cardCornerRadius = screenWidth * 0.05f
         val cardElevation = screenWidth * 0.02f
         val iconBoxSize = screenWidth * 0.12f
@@ -74,14 +75,16 @@ fun SocialMediaScreen(
                     .padding(horizontal = horizontalPadding, vertical = verticalPadding)
             ) {
                 IconButton(onClick = onBackClick) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = AccentBlue)
                 }
                 Spacer(modifier = Modifier.width(horizontalPadding))
                 Text(
                     text = "TARS Social Handles",
-                    color = TextPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = AccentBlue,
                     fontSize = headerFontSize.value.sp,
-                    fontFamily = FontFamily(Font(R.font.poppinsregular))
+                    fontFamily = FontFamily(Font(R.font.poppinsbold))
                 )
             }
 

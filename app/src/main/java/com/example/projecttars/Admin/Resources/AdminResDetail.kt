@@ -9,6 +9,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,12 +37,13 @@ fun AdminResDetailScreen(
     onEditClick: () -> Unit,
     isAdmin: Boolean
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
 
-    // Responsive values
+
     val horizontalPadding = (screenWidth * 0.04).dp
     val verticalPadding = (screenHeight * 0.02).dp
     val topRowSpacing = (screenWidth * 0.02).dp
@@ -66,7 +71,7 @@ fun AdminResDetailScreen(
                 .systemBarsPadding()
                 .padding(bottom = lazyColumnPadding)
         ) {
-            // Top Row with back & delete
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -79,7 +84,7 @@ fun AdminResDetailScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = TextPrimary,
+                            tint = AccentBlue,
                             modifier = Modifier.size(iconSize)
                         )
                     }
@@ -88,26 +93,25 @@ fun AdminResDetailScreen(
 
                     Text(
                         text = "Equipment Details",
-                        color = TextPrimary,
+                        color = AccentBlue,
                         fontSize = headingFontSize,
-                        fontFamily = FontFamily(Font(R.font.poppinsregular))
+                        fontFamily = FontFamily(Font(R.font.poppinsbold))
                     )
                 }
 
                 if (isAdmin) {
-                    IconButton(onClick = onDeleteClick) {
+                    IconButton(onClick = {showDeleteDialog=true}) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete Equipment",
                             tint = Color.Red,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(fabSize / 2))
-                                .clickable(onClick = onDeleteClick)
                         )
                     }
                 }
             }
-
+            
             Card(
                 shape = RoundedCornerShape(buttonCorner),
                 modifier = Modifier
@@ -142,7 +146,7 @@ fun AdminResDetailScreen(
                         Icon(Icons.Default.PlayArrow, contentDescription = "YouTube", tint = TextPrimary)
                         Spacer(modifier = Modifier.width(iconTextSpacing))
                         Text(
-                            "Play Lecture",
+                            "Play",
                             color = TextPrimary,
                             fontFamily = FontFamily(Font(R.font.poppinsregular)),
                             fontSize = subtitleFontSize
@@ -160,7 +164,7 @@ fun AdminResDetailScreen(
                         Icon(Icons.Default.Description, contentDescription = "Documentation", tint = TextPrimary)
                         Spacer(modifier = Modifier.width(iconTextSpacing))
                         Text(
-                            "Read About",
+                            "Read",
                             color = TextPrimary,
                             fontFamily = FontFamily(Font(R.font.poppinsregular)),
                             fontSize = subtitleFontSize
@@ -231,6 +235,33 @@ fun AdminResDetailScreen(
                     tint = AccentBlue
                 )
             }
+        }
+        if (showDeleteDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                title = { Text("Delete Admin", color = TextPrimary,fontSize = 17.sp,
+                    fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
+                text = { Text("Are you sure you want to delete ?", color = TextSecondary,       fontSize = 12.sp,
+                    fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            onDeleteClick()
+                            showDeleteDialog = false
+                        }
+                    ) {
+                        Text("Delete", color =Color.White,fontSize = 12.sp,
+                            fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium)))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteDialog = false }) {
+                        Text("Cancel", color = TextPrimary, fontSize = 12.sp,
+                            fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium)))
+                    }
+                },
+                containerColor = DarkGrayBlue
+            )
         }
     }
 }

@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.ProjectTARS" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Disable Android 12+ automatic splash screen -->
+        <item name="android:windowSplashScreenAnimatedIcon">@null</item>
+        <item name="android:windowSplashScreenBackground">@android:color/transparent</item>
+        <item name="android:windowSplashScreenBrandingImage">@null</item>
 
-    <style name="Theme.ProjectTARS" parent="android:Theme.Material.Light.NoActionBar" />
+        <!-- Optional: set your preferred background -->
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
 </resources>

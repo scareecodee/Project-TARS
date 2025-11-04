@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -77,7 +78,7 @@ fun CompletedProjectCard(
                 Column {
                     if (imageUrl.isEmpty()) {
                         Image(
-                            painter = painterResource(id = R.drawable.tarslogo),
+                            painter = painterResource(id = R.drawable.tarsapplogo_foreground),
                             contentDescription = "Project Image",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -113,7 +114,8 @@ fun CompletedProjectCard(
                         text = shortDescription,
                         fontSize = descriptionFontSize,
                         color = Color.LightGray.copy(alpha = 0.9f),
-                        maxLines = 3,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
                         fontFamily = FontFamily(Font(R.font.poppinsregular))
                     )
 

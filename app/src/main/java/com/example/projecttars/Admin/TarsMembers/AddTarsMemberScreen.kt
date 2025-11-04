@@ -19,6 +19,8 @@ import com.example.projecttars.R
 import com.example.projecttars.DataModels.MemberDetail
 import com.example.projecttars.ViewModels.NavigationData.MemberNavVM
 import com.example.projecttars.ui.theme.*
+import kotlin.text.replaceFirstChar
+import kotlin.text.uppercase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,11 +44,11 @@ fun AddTarsMemberScreen(
     var gender by remember { mutableStateOf("") }
 
     LaunchedEffect(selectedMember) {
-        selectedMember?.let {
+        selectedMember?.let { it ->
             name = it.name
             imageUrl = it.imageUrl
             domain = it.domain
-            memberId = it.id
+            memberId = it.id.replaceFirstChar { it.lowercase() }
             branch = it.branch
             designation = it.designation
             projects = it.projects.joinToString(", ")
@@ -61,10 +63,9 @@ fun AddTarsMemberScreen(
         val screenWidth = maxWidth.value
         val screenHeight = maxHeight.value
 
-        // Dynamic sizes
+
         val horizontalPadding = (screenWidth * 0.04f).dp
         val verticalSpacing = (screenHeight * 0.015f).dp
-        val textFieldHeight = (screenHeight * 0.085f).dp
         val imageHeight = (screenHeight * 0.25f).dp
         val fabSize = (screenWidth * 0.15f).dp
         val headingFontSize = (screenWidth * 0.05f).sp
@@ -103,7 +104,7 @@ fun AddTarsMemberScreen(
                                 name = name,
                                 imageUrl = imageUrl,
                                 domain = domain,
-                                id = memberId,
+                                id = memberId.replaceFirstChar { it.lowercase() },
                                 branch = branch,
                                 designation = designation,
                                 projects = projects.split(",").map { it.trim() },

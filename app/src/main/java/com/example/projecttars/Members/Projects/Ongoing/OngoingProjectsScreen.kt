@@ -25,6 +25,7 @@ import com.example.projecttars.DataModels.OngoingProjectDetail
 import com.example.projecttars.Members.UiElements.OngoingProjectCard
 import com.example.projecttars.R
 import com.example.projecttars.ViewModels.Firebase.OngoingProjectVM
+import com.example.projecttars.ui.theme.AccentBlue
 import com.example.projecttars.ui.theme.AccentOrange
 import com.example.projecttars.ui.theme.DarkGrayBlue
 
@@ -57,20 +58,25 @@ fun OngoingProjectsScreen(
         val spacerHeight = (screenHeight * 0.015f).dp
         val cardSpacing = (screenHeight * 0.02f).dp
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .background(DarkGrayBlue)
+                .fillMaxSize()
+                .systemBarsPadding()
+        ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = horizontalPadding, vertical = verticalPadding)
-                    .systemBarsPadding()
+                    .padding(start= horizontalPadding,end=horizontalPadding, top = verticalPadding)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = Color.White,
+                        tint = AccentBlue,
                         modifier = Modifier
                             .size(iconSize)
                             .clickable(onClick = onBack)
@@ -79,7 +85,7 @@ fun OngoingProjectsScreen(
                     Text(
                         text = "Ongoing Projects",
                         fontFamily = FontFamily(Font(R.font.poppinsbold)),
-                        color = AccentOrange,
+                        color = AccentBlue,
                         fontSize = headingFontSize,
                     )
                 }

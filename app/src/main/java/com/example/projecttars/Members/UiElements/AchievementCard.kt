@@ -54,7 +54,7 @@ fun AchievementCard(
 
                     if(imageUrl.isEmpty()){
                         Image(
-                            painter = painterResource(id =R.drawable.tarslogo),
+                            painter = painterResource(id =R.drawable.tarsapplogo_foreground),
                             contentDescription = "Project Image",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -95,7 +95,8 @@ fun AchievementCard(
                     text = shortDescription,
                     fontSize = 14.sp,
                     color = TextSecondary,
-                    maxLines = 3,
+                    maxLines = 2,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                     fontFamily = FontFamily(Font(R.font.poppinsregular))
                 )
 

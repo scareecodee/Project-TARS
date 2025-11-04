@@ -1,5 +1,6 @@
 package com.example.projecttars.Members.Achievements
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,11 +11,17 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -36,10 +43,11 @@ fun AchievementDetailScreen(
             .background(DarkGrayBlue)
             .systemBarsPadding()
     ) {
+        var showDeleteDialog by remember { mutableStateOf(false) }
         val screenWidth = maxWidth.value
         val screenHeight = maxHeight.value
 
-        // responsive coefficients
+
         val horizontalPadding = screenWidth * 0.04f
         val verticalPadding = screenHeight * 0.02f
         val iconSize = screenWidth * 0.07f
@@ -52,7 +60,7 @@ fun AchievementDetailScreen(
         val fabSize = screenWidth * 0.14f
 
         Column(modifier = Modifier.fillMaxSize()) {
-            // Top Bar
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -68,7 +76,7 @@ fun AchievementDetailScreen(
                         Icon(
                             Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = TextPrimary,
+                            tint =AccentBlue,
                             modifier = Modifier.size(iconSize.dp)
                         )
                     }
@@ -77,21 +85,25 @@ fun AchievementDetailScreen(
 
                     Text(
                         text = "Achievement Details",
-                        color = TextPrimary,
+                        color =AccentBlue,
                         fontSize = titleFontSize,
-                        fontFamily = FontFamily(Font(R.font.poppinsregular))
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontFamily = FontFamily(Font(R.font.poppinsbold))
                     )
                 }
 
                 if (isAdmin) {
                     IconButton(
-                        onClick = { onDeleteClick?.invoke() },
+                        onClick ={
+                            showDeleteDialog=true
+                        },
                         modifier = Modifier.size(iconSize.dp)
                     ) {
                         Icon(
                             Icons.Default.Delete,
                             contentDescription = "Delete",
-                            tint = MaterialTheme.colorScheme.error,
+                            tint =Color.Red,
                             modifier = Modifier.size(iconSize.dp)
                         )
                     }
@@ -100,7 +112,7 @@ fun AchievementDetailScreen(
 
             Spacer(modifier = Modifier.height((screenHeight * 0.01f).dp))
 
-            // Image Card
+
             Card(
                 shape = RoundedCornerShape(cardCorner.dp),
                 modifier = Modifier
@@ -110,7 +122,7 @@ fun AchievementDetailScreen(
                 elevation = CardDefaults.cardElevation(defaultElevation = (screenWidth * 0.02f).dp)
             ) {
                 AsyncImage(
-                    model = achievement.imageUrl,
+                    model = if (achievement.imageUrl.isEmpty()) R.drawable.tarsapplogo_foreground else achievement.imageUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -119,7 +131,7 @@ fun AchievementDetailScreen(
 
             Spacer(modifier = Modifier.height(spacerHeight.dp))
 
-            // Content
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -152,7 +164,7 @@ fun AchievementDetailScreen(
             }
         }
 
-        // Floating Action Button
+
         if (isAdmin) {
             FloatingActionButton(
                 onClick = { onEditClick?.invoke() },
@@ -169,6 +181,33 @@ fun AchievementDetailScreen(
                     modifier = Modifier.size((screenWidth * 0.065f).dp)
                 )
             }
+        }
+        if (showDeleteDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                title = { Text("Delete ${achievement.title}", color = TextPrimary,fontSize = 17.sp,
+                    fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
+                text = { Text("Are you sure you want to delete ?", color = TextSecondary,       fontSize = 12.sp,
+                    fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            onDeleteClick?.invoke()
+                            showDeleteDialog = false
+                        }
+                    ) {
+                        Text("Delete", color =Color.White,fontSize = 12.sp,
+                            fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium)))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteDialog = false }) {
+                        Text("Cancel", color = TextPrimary, fontSize = 12.sp,
+                            fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium)))
+                    }
+                },
+                containerColor = DarkGrayBlue
+            )
         }
     }
 }

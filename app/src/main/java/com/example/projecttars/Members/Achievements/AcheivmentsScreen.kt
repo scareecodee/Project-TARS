@@ -72,6 +72,7 @@ fun AchievementScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
+                .systemBarsPadding()
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -82,12 +83,12 @@ fun AchievementScreen(
                         end = horizontalPadding.dp,
                         top = topPadding.dp
                     )
-                    .systemBarsPadding()
+
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.White,
+                    tint =AccentBlue,
                     modifier = Modifier
                         .size(iconSize.dp)
                         .clickable(onClick = onBack)
@@ -108,7 +109,7 @@ fun AchievementScreen(
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add Achievement",
-                            tint = AccentBlue,
+                            tint =Color.White,
                             modifier = Modifier.size(iconSize.dp)
                         )
                     }

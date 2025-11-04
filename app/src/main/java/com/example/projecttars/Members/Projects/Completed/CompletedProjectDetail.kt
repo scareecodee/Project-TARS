@@ -8,6 +8,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +34,7 @@ fun CompletedProjectDetailScreen(
     onEditClick: () -> Unit,
     isAdmin: Boolean
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
 
     BoxWithConstraints(
@@ -48,7 +53,7 @@ fun CompletedProjectDetailScreen(
         val cornerRadius = (screenWidth * 0.06f).dp
         val fabPadding = (screenWidth * 0.04f).dp
         val iconSize = (screenWidth * 0.07f).dp
-        val headingFontSize = (screenWidth * 0.07f).sp
+        val headingFontSize = (screenWidth * 0.06f).sp
         val buttonCorner = (screenWidth * 0.04f).dp
         val spacerHeight1 = (screenHeight * 0.02f).dp
         val spacerHeight2 = (screenHeight * 0.015f).dp
@@ -71,7 +76,7 @@ fun CompletedProjectDetailScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = TextPrimary,
+                            tint = AccentBlue,
                             modifier = Modifier.size(iconSize)
                         )
                     }
@@ -80,18 +85,20 @@ fun CompletedProjectDetailScreen(
 
                     Text(
                         text = "Project Details",
-                        color = TextPrimary,
+                        color = AccentBlue,
                         fontSize = headingFontSize,
-                        fontFamily = FontFamily(Font(R.font.poppinsregular))
+                        fontFamily = FontFamily(Font(R.font.poppinsbold))
                     )
                 }
 
                 if (isAdmin) {
-                    IconButton(onClick = onDeleteClick) {
+                    IconButton(onClick = {
+                        showDeleteDialog=true
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete Project",
-                            tint = MaterialTheme.colorScheme.error,
+                            tint = Color.Red,
                             modifier = Modifier.size(iconSize)
                         )
                     }
@@ -107,7 +114,7 @@ fun CompletedProjectDetailScreen(
                 elevation = CardDefaults.cardElevation(cardSectionElevation)
             ) {
                 AsyncImage(
-                    model = project.imageUrl,
+                    model = if (project.imageUrl.isEmpty()) R.drawable.tarsapplogo_foreground else project.imageUrl,
                     contentDescription = project.name,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -230,6 +237,33 @@ fun CompletedProjectDetailScreen(
                     tint = Color.White
                 )
             }
+        }
+        if (showDeleteDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                title = { Text("Delete Admin", color = TextPrimary,fontSize = 17.sp,
+                    fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
+                text = { Text("Are you sure you want to delete ?", color = TextSecondary,       fontSize = 12.sp,
+                    fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            onDeleteClick()
+                            showDeleteDialog = false
+                        }
+                    ) {
+                        Text("Delete", color =Color.White,fontSize = 12.sp,
+                            fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium)))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteDialog = false }) {
+                        Text("Cancel", color = TextPrimary, fontSize = 12.sp,
+                            fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium)))
+                    }
+                },
+                containerColor = DarkGrayBlue
+            )
         }
     }
 }

@@ -113,8 +113,6 @@ fun TarsMembersScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(searchBarSpacing))
-
             SearchBar(
                 query = query,
                 onQueryChange = { query = it },

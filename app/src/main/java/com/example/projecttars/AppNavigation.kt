@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.projecttars.Admin.Achievements.AddAchievementScreen
@@ -26,13 +27,10 @@ import com.example.projecttars.Admin.SocialMedia.AdminSocialMedia
 import com.example.projecttars.Admin.TarsMembers.AdminTarsMemberDetail
 import com.example.projecttars.Admin.TarsMembers.AdminTarsMemberScreen
 import com.example.projecttars.Common.RoleSelectionScreen
-import com.example.projecttars.DataModels.NotificationItem
-import com.example.projecttars.DataModels.OngoingProjectDetail
 import com.example.projecttars.Members.Achievements.AchievementDetailScreen
 import com.example.projecttars.Members.MainScreen
 import com.example.projecttars.Members.Projects.Completed.CompletedProjectsScreen
 import com.example.projecttars.Members.Login.MembersLogin
-import com.example.projecttars.Members.Profile.MessageAdminScreen
 import com.example.projecttars.Members.Profile.NotificationScreen
 import com.example.projecttars.Members.Projects.Completed.AchievementScreen
 import com.example.projecttars.Members.Projects.Completed.CompletedProjectDetailScreen
@@ -44,22 +42,33 @@ import com.example.projecttars.Members.TarsMembers.TarsMembersScreen
 import com.example.projecttars.ViewModels.Firebase.ResourcesVM
 import com.example.projecttars.ViewModels.NavigationData.ResourcesNavVM
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.projecttars.Admin.Achievements.EditAchievement
+import com.example.projecttars.Admin.Profile.ManageAdmins.AddAdminScreen
+import com.example.projecttars.Admin.Profile.ManageAdmins.ManageAdminSCreen
 import com.example.projecttars.Admin.Projects.Completed.EditCompletedProjectScreen
 import com.example.projecttars.Admin.Projects.Ongoing.EditOngoingProject
 import com.example.projecttars.Admin.Resources.EditResource
 import com.example.projecttars.Admin.TarsMembers.EditMember
+import com.example.projecttars.Common.SplashScreen
 import com.example.projecttars.Members.Resources.EquipmentDetailScreen
 import com.example.projecttars.ViewModels.Firebase.AchievementsVM
+import com.example.projecttars.ViewModels.Firebase.AdminVM
+import com.example.projecttars.ViewModels.Firebase.AuthState
+import com.example.projecttars.ViewModels.Firebase.AuthVM
 import com.example.projecttars.ViewModels.Firebase.CompletedProjectVM
 import com.example.projecttars.ViewModels.Firebase.MembersVM
+import com.example.projecttars.ViewModels.Firebase.NotificationVM
 import com.example.projecttars.ViewModels.Firebase.OngoingProjectVM
 import com.example.projecttars.ViewModels.NavigationData.AchievementsNavVM
 import com.example.projecttars.ViewModels.NavigationData.CompletedProjectNavVM
 import com.example.projecttars.ViewModels.NavigationData.MemberNavVM
 import com.example.projecttars.ViewModels.NavigationData.OngoingProjectNavVM
+import com.example.projecttars.ui.screens.AboutSocietyScreen
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -74,10 +83,18 @@ fun AppNavGraph(navController: NavHostController) {
     val completedProjectNavVM: CompletedProjectNavVM = viewModel()
     val ongoingProjectVM: OngoingProjectVM = viewModel()
     val ongoingProjectNavVM: OngoingProjectNavVM = viewModel()
-    NavHost(navController, startDestination = "role_selection") {
+    val adminVM: AdminVM = viewModel()
+    val authVM: AuthVM = viewModel()
+    val notificationVM: NotificationVM=viewModel()
 
-        composable("role_selection") {
+
+    NavHost(navController, startDestination = "splash") {
+     composable("splash") {
+         SplashScreen(navController,authVM)
+     }
+        defaultComposable("role_selection") {
             RoleSelectionScreen { selectedRole ->
+                authVM.setUserRole(selectedRole)
                 when (selectedRole) {
                     "Members" -> navController.navigate("MembersLogin")
                     "Admin" -> navController.navigate("AdminLogin")
@@ -86,32 +103,111 @@ fun AppNavGraph(navController: NavHostController) {
         }
 
         defaultComposable("MembersLogin") {
-            MembersLogin { username, password ->
-                if (username.isNotBlank() && password.isNotBlank()) {
-                    navController.navigate("MembersMainScreen") {
-                        popUpTo("MembersLogin") { inclusive = true }
-                        launchSingleTop = true
+            val authState by authVM.authState.observeAsState(AuthState.Unauthenticated)
+             MembersLogin(
+                onLoginClick = { username, password ->
+                    if (username.isNotBlank() && password.isNotBlank()) {
+                                authVM.login(username, password)
+                            }
+                        }
+            )
+
+            when (authState) {
+                is AuthState.Loading -> {
+                    Toast.makeText(
+                        navController.context,
+                        "Waiting...",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                is AuthState.Authenticated -> {
+
+                    LaunchedEffect(Unit) {
+                        delay(2000)
+                        navController.navigate("MembersMainScreen") {
+                            popUpTo("AdminLogin") { inclusive = true }
+                            launchSingleTop = true
+                        }
                     }
                 }
+
+                is AuthState.Error -> {
+                    Toast.makeText(
+                        navController.context,
+                        "Invalid Credential",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                else -> {}
             }
         }
 
+
+
         defaultComposable("AdminLogin") {
-            AdminLogin { username, password ->
-                if (username.isNotBlank() && password.isNotBlank()) {
-                    navController.navigate("AdminMainScreen") {
-                        popUpTo("AdminLogin") { inclusive = true }
-                        launchSingleTop = true
+            val authState by authVM.authState.observeAsState(AuthState.Unauthenticated)
+
+            AdminLogin(
+                onLoginClick = { username, password ->
+                    if (username.isNotBlank() && password.isNotBlank()) {
+                        adminVM.isAdmin(username) { isAdmin ->
+                            if (isAdmin) {
+                                authVM.login(username, password)
+                            } else {
+                                Toast.makeText(
+                                    navController.context,
+                                    "Invalid Credentials",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                },
+            )
+
+            when (authState) {
+                is AuthState.Loading -> {
+                    Toast.makeText(
+                        navController.context,
+                        "Waiting...",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                is AuthState.Authenticated -> {
+
+                    LaunchedEffect(Unit) {
+                        delay(2000)
+                        navController.navigate("AdminMainScreen") {
+                            popUpTo("AdminLogin") { inclusive = true }
+                            launchSingleTop = true
+                        }
                     }
                 }
+
+                is AuthState.Error -> {
+                    Toast.makeText(
+                        navController.context,
+                        "Invalid Credential",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                else -> {}
             }
         }
+
+
 
         defaultComposable("MembersMainScreen") {
             MainScreen(
                 navController,
                 resourcesVM,
-                resourcesNavVM
+                resourcesNavVM,
+                authVM,
+                membersVM
             )
         }
 
@@ -225,36 +321,15 @@ fun AppNavGraph(navController: NavHostController) {
 
         defaultComposable("NotificationScreen") {
             NotificationScreen(
-                notifications = listOf(
-                    NotificationItem(
-                        "Notification Title",
-                        "Notification Description",
-                        "Notification Date"
-                    ),
-                    NotificationItem(
-                        "Notification Title",
-                        "Notification Description",
-                        "Notification Date"
-                    ),
-                    NotificationItem(
-                        "Notification Title",
-                        "Notification Description",
-                        "Notification Date"
-                    )
-                ),
+              isAdmin = false,
+                notificationVM = notificationVM,
                 onBackClick = { navController.popBackStack() }
             )
         }
 
-        defaultComposable("MessageAdminScreen") {
-            MessageAdminScreen(
-                onBackClick = { navController.popBackStack() },
-                onSendClick = { title, description -> /* Handle send message */ }
-            )
-        }
 
         defaultComposable("AdminMainScreen") {
-            AdminMainScreen(navController, resourcesVM, resourcesNavVM)
+            AdminMainScreen(navController, resourcesVM, resourcesNavVM, authVM, membersVM)
         }
 
         defaultComposable("AdminResDetailScreen") {
@@ -331,7 +406,6 @@ fun AppNavGraph(navController: NavHostController) {
                         onResult = { result ->
                             if (result) {
                                 membersNavVM.selectMember(updatedMember)
-
                                 Toast.makeText(
                                     navController.context,
                                     "Updated successfully",
@@ -461,6 +535,7 @@ fun AppNavGraph(navController: NavHostController) {
                         updated = updated,
                         onResult = { result ->
                             if (result) {
+                                ongoingProjectNavVM.selectOngoingProject(updated)
                                 Toast.makeText(navController.context, "success", Toast.LENGTH_SHORT)
                                     .show()
                                 navController.popBackStack()
@@ -548,6 +623,7 @@ fun AppNavGraph(navController: NavHostController) {
                                         "Member Deleted",
                                         Toast.LENGTH_SHORT
                                     ).show()
+                                    navController.navigate("AdminTarsMemberScreen")
                                 } else {
                                     Toast.makeText(
                                         navController.context,
@@ -572,23 +648,7 @@ fun AppNavGraph(navController: NavHostController) {
 
         defaultComposable("AdminNotificationScreen") {
             AdminNotificationScreen(
-                notifications = listOf(
-                    NotificationItem(
-                        "Notification Title",
-                        "Notification Description",
-                        "Notification Date"
-                    ),
-                    NotificationItem(
-                        "Notification Title",
-                        "Notification Description",
-                        "Notification Date"
-                    ),
-                    NotificationItem(
-                        "Notification Title",
-                        "Notification Description",
-                        "Notification Date"
-                    )
-                ),
+                notificationVM = notificationVM,
                 onBackClick = { navController.navigate("AdminMainScreen") },
                 onSendNotificationClick = { navController.navigate("SendNotificationScreen") }
             )
@@ -596,8 +656,23 @@ fun AppNavGraph(navController: NavHostController) {
 
         defaultComposable("SendNotificationScreen") {
             SendNotificationScreen(
-                onBackClick = { navController.navigate("AdminMainScreen") },
-                onSendClick = { title, description -> /* Handle send notification */ }
+                onBackClick = { navController.navigate("AdminNotificationScreen") },
+                onSendClick = { title, description ->
+                    notificationVM.createNotification(
+                        title = title,
+                        description = description,
+                        onResult = { result ->
+                            if (result) {
+                                Toast.makeText(navController.context, "Notification Sent", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                            else{
+                                Toast.makeText(navController.context, "Failed", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                        )
+                }
             )
         }
 
@@ -666,6 +741,7 @@ fun AppNavGraph(navController: NavHostController) {
                         updated = updated,
                         onResult = { result ->
                             if (result) {
+                                completedProjectNavVM.selectCompletedProject(updated)
                                 Toast.makeText(navController.context, "success", Toast.LENGTH_SHORT)
                                     .show()
                                 navController.popBackStack()
@@ -765,6 +841,7 @@ fun AppNavGraph(navController: NavHostController) {
                         updated = it,
                         onResult = { result ->
                             if (result) {
+                                achievementsNavVM.selectAchievement(it)
                                 Toast.makeText(navController.context, "success", Toast.LENGTH_SHORT)
                                     .show()
                                 navController.popBackStack()
@@ -778,6 +855,30 @@ fun AppNavGraph(navController: NavHostController) {
                         achievementsNavVM = achievementsNavVM
             )
 
+        }
+
+        defaultComposable("ManageAdminScreen"){
+            ManageAdminSCreen(
+                onBack = { navController.popBackStack() },
+                onAddAdmin = { navController.navigate("AddAdminScreen") },
+                adminVM = adminVM
+            )
+        }
+
+        defaultComposable("AddAdminScreen"){
+            AddAdminScreen(
+                adminVM = adminVM,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        defaultComposable("AboutSocietyScreen"){
+            AboutSocietyScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

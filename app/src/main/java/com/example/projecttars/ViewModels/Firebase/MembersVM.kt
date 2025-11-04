@@ -48,6 +48,8 @@ class MembersVM : ViewModel() {
             return
         }
 
+
+
         database.child(member.id).setValue(member)
             .addOnSuccessListener { onResult(true) }
             .addOnFailureListener { e ->
@@ -65,6 +67,7 @@ class MembersVM : ViewModel() {
         }
 
         val updates = mapOf<String, Any?>(
+            "id" to member.id,
             "name" to member.name,
             "imageUrl" to member.imageUrl,
             "domain" to member.domain,
@@ -106,5 +109,25 @@ class MembersVM : ViewModel() {
         listener?.let { database.removeEventListener(it) }
         listenerAdded = false
         Log.d("MembersVM", "Firebase listener removed in onCleared()")
+    }
+
+    fun getMemberById(memberId: String, onResult: (MemberDetail?) -> Unit) {
+        if (memberId.isBlank()) {
+            onResult(null)
+            return
+        }
+
+        database.child(memberId.replaceFirstChar { it.lowercase() })
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val member = snapshot.getValue(MemberDetail::class.java)
+                    onResult(member)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("MembersVM", "Failed to get member: ${error.message}")
+                    onResult(null)
+                }
+            })
     }
 }

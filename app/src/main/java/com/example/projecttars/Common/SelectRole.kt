@@ -1,5 +1,7 @@
 package com.example.projecttars.Common
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -32,22 +35,26 @@ import com.example.projecttars.ui.theme.DarkSlate
 fun RoleSelectionScreen(
     onRoleSelected: (String) -> Unit
 ) {
-    // Screen dimensions
+
+    val activity = (LocalContext.current as? Activity)
+    BackHandler {
+        activity?.finish()
+    }
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
 
-    // Responsive coefficients
-    val horizontalPadding = screenWidth * 0.06f     // ~24.dp on 400dp screen
-    val titleFontSize = screenWidth.value * 0.065f  // ~26.sp
-    val subtitleFontSize = screenWidth.value * 0.035f // ~14.sp
-    val spacerSmall = screenHeight * 0.01f          // ~8.dp
-    val spacerLarge = screenHeight * 0.04f          // ~32.dp
-    val buttonHeight = screenHeight * 0.065f        // ~50.dp
-    val iconSize = screenWidth * 0.09f              // ~36.dp
-    val cardPadding = screenHeight * 0.03f          // ~24.dp
-    val cardCorner = screenWidth * 0.03f            // ~12.dp
-    val borderThickness = screenWidth * 0.005f      // ~2.dp
+
+    val horizontalPadding = screenWidth * 0.06f
+    val titleFontSize = screenWidth.value * 0.065f
+    val subtitleFontSize = screenWidth.value * 0.035f
+    val spacerSmall = screenHeight * 0.01f
+    val spacerLarge = screenHeight * 0.04f
+    val buttonHeight = screenHeight * 0.065f
+    val iconSize = screenWidth * 0.09f
+    val cardPadding = screenHeight * 0.03f
+    val cardCorner = screenWidth * 0.03f
+    val borderThickness = screenWidth * 0.005f
 
     var selectedRole by remember { mutableStateOf<String?>(null) }
 
@@ -59,7 +66,7 @@ fun RoleSelectionScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Title
+
         Text(
             text = "Choose Your Role",
             fontSize = titleFontSize.sp,
@@ -70,7 +77,7 @@ fun RoleSelectionScreen(
 
         Spacer(modifier = Modifier.height(spacerSmall))
 
-        // Subtitle
+
         Text(
             text = "Select your role to get a tailored experience.",
             fontSize = subtitleFontSize.sp,
@@ -81,7 +88,7 @@ fun RoleSelectionScreen(
 
         Spacer(modifier = Modifier.height(spacerLarge))
 
-        // Role options
+
         Row(
             horizontalArrangement = Arrangement.spacedBy(screenWidth * 0.04f), // ~16.dp
             modifier = Modifier.fillMaxWidth(),
@@ -115,7 +122,7 @@ fun RoleSelectionScreen(
 
         Spacer(modifier = Modifier.height(spacerLarge))
 
-        // Continue button
+
         Button(
             onClick = { selectedRole?.let { onRoleSelected(it) } },
             enabled = selectedRole != null,

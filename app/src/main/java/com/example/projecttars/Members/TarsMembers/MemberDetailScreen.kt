@@ -8,6 +8,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.projecttars.DataModels.MemberDetail
 import com.example.projecttars.R
-import com.example.projecttars.ViewModels.NavigationData.MemberNavVM
 import com.example.projecttars.ui.theme.*
 
 @Composable
@@ -32,6 +35,7 @@ fun MemberDetailScreen(
     onDeleteClick: (() -> Unit)? = null,
     onEditClick: (() -> Unit)? = null
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
 
     BoxWithConstraints(
@@ -43,17 +47,15 @@ fun MemberDetailScreen(
         val screenWidth = maxWidth.value
         val screenHeight = maxHeight.value
 
-        // Dynamic sizing
+
         val horizontalPadding = (screenWidth * 0.04f).dp
         val verticalPadding = (screenHeight * 0.02f).dp
         val cardCornerRadius = (screenWidth * 0.04f).dp
         val cardHeight = (screenHeight * 0.28f).dp
         val headingFontSize = (screenWidth * 0.06f).sp
         val iconSize = (screenWidth * 0.06f).dp
-        val sectionTitleFont = (screenWidth * 0.045f).sp
         val sectionContentFont = (screenWidth * 0.035f).sp
         val fabSize = (screenWidth * 0.15f).dp
-        val sectionSpacing = (screenHeight * 0.012f).dp
         val rowSpacing = (screenWidth * 0.03f).dp
 
         Column(modifier = Modifier.fillMaxSize()) {
@@ -77,18 +79,18 @@ fun MemberDetailScreen(
                     Spacer(modifier = Modifier.width(rowSpacing))
                     Text(
                         text = "Member Details",
-                        color = TextPrimary,
+                        color =AccentBlue,
                         fontSize = headingFontSize,
-                        fontFamily = FontFamily(Font(R.font.poppinsregular))
+                        fontFamily = FontFamily(Font(R.font.poppinsbold))
                     )
                 }
 
                 if (isAdmin) {
-                    IconButton(onClick = { onDeleteClick?.invoke() }) {
+                    IconButton(onClick ={showDeleteDialog=true}) {
                         Icon(
                             Icons.Default.Delete,
                             contentDescription = "Delete",
-                            tint = MaterialTheme.colorScheme.error,
+                            tint =  Color.Red,
                             modifier = Modifier.size(iconSize)
                         )
                     }
@@ -104,7 +106,7 @@ fun MemberDetailScreen(
                 elevation = CardDefaults.cardElevation((screenHeight * 0.015f).dp)
             ) {
                 AsyncImage(
-                    model = member.imageUrl,
+                    model = if (member.imageUrl.isEmpty()) R.drawable.tarsapplogo_foreground else member.imageUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -161,6 +163,33 @@ fun MemberDetailScreen(
             ) {
                 Icon(Icons.Default.Edit, contentDescription = "Edit", tint = TextPrimary, modifier = Modifier.size(iconSize))
             }
+        }
+        if (showDeleteDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                title = { Text("Delete ${member.name} from TARS members", color = TextPrimary,fontSize = 17.sp,
+                    fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
+                text = { Text("Are you sure you want to delete ?", color = TextSecondary,       fontSize = 12.sp,
+                    fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            onDeleteClick?.invoke()
+                            showDeleteDialog = false
+                        }
+                    ) {
+                        Text("Delete", color =Color.White,fontSize = 12.sp,
+                            fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium)))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteDialog = false }) {
+                        Text("Cancel", color = TextPrimary, fontSize = 12.sp,
+                            fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium)))
+                    }
+                },
+                containerColor = DarkGrayBlue
+            )
         }
     }
 }

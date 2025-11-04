@@ -25,16 +25,19 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
+import coil.compose.AsyncImage
 import com.example.projecttars.R
 import com.example.projecttars.ui.theme.*
 
 @Composable
 fun AdminProfileScreen(
-    username: String = "John Doe",
-    email: String = "johndoe@example.com",
+    imageUrl: String,
+    username: String ,
+    email: String,
     onLogoutClick: () -> Unit = {},
     onNotificationsViewClick: () -> Unit = {},
-    onAboutSocietyClick: () -> Unit = {}
+    onAboutSocietyClick: () -> Unit = {},
+    onManageAdminsClick: () -> Unit = {}
 ) {
     val gradientColorsHeader = listOf(DarkGrayBlue, AccentBlue.copy(alpha = 0.5f), DarkSlate)
     val gradientColorsCard = listOf(DarkGrayBlue, DarkSlate)
@@ -46,7 +49,7 @@ fun AdminProfileScreen(
     ) {
         val screenWidth = maxWidth.value
 
-        // Responsive sizes
+
         val headerHeight = (screenWidth * 0.6f).dp
         val profileImageSize = (screenWidth * 0.38f).dp
         val spacerSmall = (screenWidth * 0.02f).dp
@@ -69,15 +72,27 @@ fun AdminProfileScreen(
                     .background(Brush.verticalGradient(colors = gradientColorsHeader)),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.tarslogo),
-                    contentDescription = "Profile Image",
-                    modifier = Modifier
-                        .size(profileImageSize)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
+                val imageModifier = Modifier
+                    .size(profileImageSize)
+                    .align(Alignment.Center)
+
+                if (imageUrl.isNotEmpty()) {
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = "Profile Image",
+                        modifier = imageModifier,
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.tarsapplogo_foreground),
+                        contentDescription = "Profile Image",
+                        modifier = imageModifier,
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
+
 
             Spacer(modifier = Modifier.height(spacerMedium))
 
@@ -135,6 +150,19 @@ fun AdminProfileScreen(
                         textSizeAction,
                         iconTextSpacing,
                         onAboutSocietyClick
+                    )
+                }
+                item {
+                    ActionCardMinimal(
+                        "Manage Admins",
+                        Icons.Default.ManageAccounts,
+                        listOf(DarkSlate, DarkGrayBlue),
+                        actionCardHeight,
+                        actionCardCorner,
+                        iconSize,
+                        textSizeAction,
+                        iconTextSpacing,
+                        onManageAdminsClick
                     )
                 }
                 item {

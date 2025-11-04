@@ -25,14 +25,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
+import coil.compose.AsyncImage
 import com.example.projecttars.Admin.Profile.ActionCardMinimal
 import com.example.projecttars.R
 import com.example.projecttars.ui.theme.*
 
 @Composable
 fun ProfileScreen(
-    username: String = "John Doe",
-    email: String = "johndoe@example.com",
+    imageUrl: String,
+    username: String ,
+    email: String ,
     onLogoutClick: () -> Unit = {},
     onNotificationsClick: () -> Unit = {},
     onAboutSocietyClick: () -> Unit = {}
@@ -72,15 +74,27 @@ fun ProfileScreen(
                     .background(Brush.verticalGradient(colors = gradientColorsHeader)),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.tarslogo),
-                    contentDescription = "Profile Image",
-                    modifier = Modifier
-                        .size(profileImageSize)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
+                val imageModifier = Modifier
+                    .size(profileImageSize)
+                    .clip(CircleShape)
+
+                if (imageUrl.isNotEmpty()) {
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = "Profile Image",
+                        modifier = imageModifier,
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.tarsapplogo_foreground),
+                        contentDescription = "Profile Image",
+                        modifier = imageModifier,
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
+
 
             Spacer(modifier = Modifier.height(spacerSmall))
 

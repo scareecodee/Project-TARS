@@ -92,7 +92,8 @@ fun SearchBar(
                         color = Color.LightGray
                     )
                 },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f)
+                ,
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = DarkSlate,
                     unfocusedContainerColor = DarkSlate,

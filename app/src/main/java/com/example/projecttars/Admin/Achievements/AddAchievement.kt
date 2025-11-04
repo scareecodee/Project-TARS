@@ -88,6 +88,7 @@ fun AddAchievementScreen(
                     onClick = {
                         onSaveClick(
                             Achievement(
+                                id= selectedAchievement?.id ?: "",
                                 imageUrl = imageUrl,
                                 title = title,
                                 shortDescription = shortDescription

@@ -24,7 +24,8 @@ import com.example.projecttars.ui.theme.*
 
 @Composable
 fun AdminLogin(
-    onLoginClick: (String, String) -> Unit
+    onLoginClick: (String, String) -> Unit,
+
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

@@ -55,6 +55,8 @@ class AchievementsVM : ViewModel() {
 
 
     fun updateAchievement(id: String, updated: Achievement, onResult: (Boolean) -> Unit) {
+        Log.d("AchievementsVM", "Updating achievement with ID: $id")
+
         if (id.isBlank()) {
             onResult(false)
             return

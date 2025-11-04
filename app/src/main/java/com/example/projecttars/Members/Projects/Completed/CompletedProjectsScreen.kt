@@ -56,12 +56,14 @@ fun CompletedProjectsScreen(
         val addIconSize = (screenWidth * 0.06f).dp
         val headingFontSize = (screenWidth * 0.055f).sp
         val noProjectFontSize = (screenWidth * 0.05f).sp
+        val verticalPadding = (screenHeight * 0.02f).dp
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .background(DarkGrayBlue)
                 .fillMaxSize()
+                .systemBarsPadding()
         ) {
 
             Row(
@@ -69,8 +71,7 @@ fun CompletedProjectsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = horizontalPadding, top = verticalSpacing, end = horizontalPadding)
-                    .systemBarsPadding()
+                    .padding(start = horizontalPadding,end=horizontalPadding, top = verticalPadding)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -78,7 +79,7 @@ fun CompletedProjectsScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = Color.White,
+                        tint =AccentBlue,
                         modifier = Modifier
                             .size(iconSize)
                             .clickable { onBack() }
@@ -103,8 +104,6 @@ fun CompletedProjectsScreen(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(verticalSpacing))
 
             if (completedProjects.isEmpty()) {
                 Box(

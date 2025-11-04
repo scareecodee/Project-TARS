@@ -1,19 +1,19 @@
 package com.example.projecttars.Admin.Profile
 
 import androidx.compose.runtime.Composable
-import com.example.projecttars.DataModels.NotificationItem
 import com.example.projecttars.Members.Profile.NotificationScreen
+import com.example.projecttars.ViewModels.Firebase.NotificationVM
 
 @Composable
 fun AdminNotificationScreen(
-    notifications: List<NotificationItem>,
+    notificationVM: NotificationVM,
     onBackClick: () -> Unit,
     onSendNotificationClick: (() -> Unit)? = null
 ){
     NotificationScreen(
-        notifications = notifications,
         onBackClick = onBackClick,
         isAdmin = true,
-        onSendNotificationClick = onSendNotificationClick
+        onSendNotificationClick = onSendNotificationClick,
+        notificationVM = notificationVM
     )
 }

@@ -27,11 +27,10 @@ fun SendNotificationScreen(
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
 
-    // Responsive sizes
     val paddingHorizontal = (screenWidth * 0.04).dp
     val paddingVertical = (screenHeight * 0.02).dp
     val spacerSmall = (screenHeight * 0.02).dp
-    val textSizeHeading = (screenWidth * 0.07).sp
+    val textSizeHeading = (screenWidth * 0.065).sp
     val textFieldHeight = (screenHeight * 0.2).dp
     val fabPadding = (screenWidth * 0.05).dp
     val textFieldCorner = (screenWidth * 0.04).dp
@@ -58,14 +57,14 @@ fun SendNotificationScreen(
                     .padding(vertical = paddingVertical)
             ) {
                 IconButton(onClick = onBackClick) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = AccentBlue)
                 }
                 Spacer(modifier = Modifier.width(paddingHorizontal))
                 Text(
                     text = "Send Notification",
-                    color = TextPrimary,
+                    color = AccentBlue,
                     fontSize = textSizeHeading,
-                    fontFamily = FontFamily(Font(R.font.poppinsregular))
+                    fontFamily = FontFamily(Font(R.font.poppinsmedium))
                 )
             }
 
