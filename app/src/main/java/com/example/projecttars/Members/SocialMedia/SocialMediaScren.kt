@@ -1,5 +1,6 @@
 package com.example.projecttars.Members.SocialMedia
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -7,7 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -17,28 +18,33 @@ import androidx.compose.ui.draw.clip
 import com.example.projecttars.ui.theme.*
 import com.example.projecttars.R
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
-import com.example.projecttars.DataModels.SocialMediaHandle
+import androidx.compose.ui.graphics.Color
+import com.example.projecttars.DataModels.SocialHandle
+import com.example.projecttars.ViewModels.Firebase.TarsSocialViewModel
 
 @Composable
 fun SocialMediaScreen(
     onBackClick: () -> Unit,
     isAdmin: Boolean = false,
-    onEditClick: (() -> Unit)? = null
+    onEditClick: (() -> Unit)? = null,
+    socialViewModel: TarsSocialViewModel
 ) {
     val uriHandler = LocalUriHandler.current
+    val socialLinks by socialViewModel.socialLinks.collectAsState()
+
+    LaunchedEffect(Unit) {
+        socialViewModel.readSocialLinks { }
+    }
+
 
     val socialHandles = listOf(
-        SocialMediaHandle(
-            "LinkedIn",
-            "https://www.linkedin.com/company/tars-society",
-            Icons.Default.Link,
-            AccentBlue
-        ),
-        SocialMediaHandle("Instagram", "https://www.instagram.com/tars.society", Icons.Default.CameraAlt, AccentPurple),
-        SocialMediaHandle("YouTube", "https://www.youtube.com/@TARS", Icons.Default.PlayArrow, AccentOrange),
-        SocialMediaHandle("Gmail", "mailto:tars.society@gmail.com", Icons.Default.Email, AccentBlue)
+        SocialHandle("Instagram", socialLinks.instagram, Icons.Default.CameraAlt, AccentOrange),
+        SocialHandle("YouTube", socialLinks.youtube, Icons.Default.PlayArrow, Color(0xFFFF0000)),
+        SocialHandle("LinkedIn", socialLinks.linkedin, Icons.Default.Link, Color(0xFF0077B5)),
+        SocialHandle("Gmail", "mailto:${socialLinks.mail}", Icons.Default.Email, AccentPurple)
     )
 
     BoxWithConstraints(
@@ -50,7 +56,6 @@ fun SocialMediaScreen(
         val screenWidth = maxWidth
         val screenHeight = maxHeight
 
-        // Dynamic sizing
         val horizontalPadding = screenWidth * 0.04f
         val verticalPadding = screenHeight * 0.02f
         val headerFontSize = (screenWidth * 0.06f)
@@ -61,13 +66,12 @@ fun SocialMediaScreen(
         val spacerWidth = screenWidth * 0.04f
         val nameFontSize = (screenWidth * 0.045f)
         val urlFontSize = (screenWidth * 0.035f)
-        val cardPadding = screenWidth * 0.04f
         val rowPadding = screenWidth * 0.04f
         val fabSize = screenWidth * 0.14f
         val fabPadding = screenWidth * 0.05f
 
         Column(modifier = Modifier.fillMaxSize()) {
-            // Header
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -94,9 +98,7 @@ fun SocialMediaScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = screenHeight * 0.1f)
             ) {
-                items(socialHandles.size) { index ->
-                    val handle = socialHandles[index]
-
+                items(socialHandles) { handle ->
                     Card(
                         colors = CardDefaults.cardColors(containerColor = DarkSlate),
                         shape = RoundedCornerShape(cardCornerRadius),
@@ -104,14 +106,16 @@ fun SocialMediaScreen(
                             .fillMaxWidth()
                             .padding(horizontal = horizontalPadding, vertical = verticalPadding / 2)
                             .clip(RoundedCornerShape(cardCornerRadius))
-                            .clickable { uriHandler.openUri(handle.url) },
+                            .clickable {
+                                if (handle.url.isNotEmpty()) uriHandler.openUri(handle.url)
+                            },
                         elevation = CardDefaults.cardElevation(defaultElevation = cardElevation)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(rowPadding)
                         ) {
-                            // Icon Box
+
                             Box(
                                 modifier = Modifier
                                     .size(iconBoxSize)
@@ -168,3 +172,4 @@ fun SocialMediaScreen(
         }
     }
 }
+

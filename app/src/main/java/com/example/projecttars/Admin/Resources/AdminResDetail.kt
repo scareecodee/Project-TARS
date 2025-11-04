@@ -1,7 +1,6 @@
 package com.example.projecttars.Admin.Resources
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.projecttars.DataModels.TarsLabComponent
 import com.example.projecttars.R
+import com.example.projecttars.Utils.isLink
 import com.example.projecttars.ui.theme.*
 
 @Composable
@@ -137,38 +137,42 @@ fun AdminResDetailScreen(
                 horizontalArrangement = Arrangement.spacedBy(iconTextSpacing)
             ) {
                 equipment.youtubeUrl?.let { url ->
-                    Button(
-                        onClick = { uriHandler.openUri(url) },
-                        colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
-                        modifier = Modifier.weight(1f).height(buttonHeight),
-                        shape = RoundedCornerShape(buttonCorner)
-                    ) {
-                        Icon(Icons.Default.PlayArrow, contentDescription = "YouTube", tint = TextPrimary)
-                        Spacer(modifier = Modifier.width(iconTextSpacing))
-                        Text(
-                            "Play",
-                            color = TextPrimary,
-                            fontFamily = FontFamily(Font(R.font.poppinsregular)),
-                            fontSize = subtitleFontSize
-                        )
+                    if(isLink(url)) {
+                        Button(
+                            onClick = { uriHandler.openUri(url) },
+                            colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
+                            modifier = Modifier.weight(1f).height(buttonHeight),
+                            shape = RoundedCornerShape(buttonCorner)
+                        ) {
+                            Icon(Icons.Default.PlayArrow, contentDescription = "YouTube", tint = TextPrimary)
+                            Spacer(modifier = Modifier.width(iconTextSpacing))
+                            Text(
+                                "Play",
+                                color = TextPrimary,
+                                fontFamily = FontFamily(Font(R.font.poppinsregular)),
+                                fontSize = subtitleFontSize
+                            )
+                        }
                     }
                 }
 
                 equipment.documentationUrl?.let { url ->
-                    Button(
-                        onClick = { uriHandler.openUri(url) },
-                        colors = ButtonDefaults.buttonColors(containerColor = AccentBlue),
-                        modifier = Modifier.weight(1f).height(buttonHeight),
-                        shape = RoundedCornerShape(buttonCorner)
-                    ) {
-                        Icon(Icons.Default.Description, contentDescription = "Documentation", tint = TextPrimary)
-                        Spacer(modifier = Modifier.width(iconTextSpacing))
-                        Text(
-                            "Read",
-                            color = TextPrimary,
-                            fontFamily = FontFamily(Font(R.font.poppinsregular)),
-                            fontSize = subtitleFontSize
-                        )
+                    if(isLink(url)){
+                        Button(
+                            onClick = { uriHandler.openUri(url) },
+                            colors = ButtonDefaults.buttonColors(containerColor = AccentBlue),
+                            modifier = Modifier.weight(1f).height(buttonHeight),
+                            shape = RoundedCornerShape(buttonCorner)
+                        ) {
+                            Icon(Icons.Default.Description, contentDescription = "Documentation", tint = TextPrimary)
+                            Spacer(modifier = Modifier.width(iconTextSpacing))
+                            Text(
+                                "Read",
+                                color = TextPrimary,
+                                fontFamily = FontFamily(Font(R.font.poppinsregular)),
+                                fontSize = subtitleFontSize
+                            )
+                        }
                     }
                 }
             }
@@ -239,7 +243,7 @@ fun AdminResDetailScreen(
         if (showDeleteDialog) {
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
-                title = { Text("Delete Admin", color = TextPrimary,fontSize = 17.sp,
+                title = { Text("Delete ${equipment.name}", color = TextPrimary,fontSize = 17.sp,
                     fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
                 text = { Text("Are you sure you want to delete ?", color = TextSecondary,       fontSize = 12.sp,
                     fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },

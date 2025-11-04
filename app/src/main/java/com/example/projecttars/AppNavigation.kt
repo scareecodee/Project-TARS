@@ -52,6 +52,7 @@ import com.example.projecttars.Admin.Profile.ManageAdmins.ManageAdminSCreen
 import com.example.projecttars.Admin.Projects.Completed.EditCompletedProjectScreen
 import com.example.projecttars.Admin.Projects.Ongoing.EditOngoingProject
 import com.example.projecttars.Admin.Resources.EditResource
+import com.example.projecttars.Admin.SocialMedia.EditSocialMedia
 import com.example.projecttars.Admin.TarsMembers.EditMember
 import com.example.projecttars.Common.SplashScreen
 import com.example.projecttars.Members.Resources.EquipmentDetailScreen
@@ -63,6 +64,7 @@ import com.example.projecttars.ViewModels.Firebase.CompletedProjectVM
 import com.example.projecttars.ViewModels.Firebase.MembersVM
 import com.example.projecttars.ViewModels.Firebase.NotificationVM
 import com.example.projecttars.ViewModels.Firebase.OngoingProjectVM
+import com.example.projecttars.ViewModels.Firebase.TarsSocialViewModel
 import com.example.projecttars.ViewModels.NavigationData.AchievementsNavVM
 import com.example.projecttars.ViewModels.NavigationData.CompletedProjectNavVM
 import com.example.projecttars.ViewModels.NavigationData.MemberNavVM
@@ -86,6 +88,8 @@ fun AppNavGraph(navController: NavHostController) {
     val adminVM: AdminVM = viewModel()
     val authVM: AuthVM = viewModel()
     val notificationVM: NotificationVM=viewModel()
+    val socialViewModel: TarsSocialViewModel = viewModel()
+
 
 
     NavHost(navController, startDestination = "splash") {
@@ -305,9 +309,7 @@ fun AppNavGraph(navController: NavHostController) {
             }
         }
 
-        defaultComposable("SocialMediaScreen") {
-            SocialMediaScreen(onBackClick = { navController.navigate("MembersMainScreen") })
-        }
+
 
         defaultComposable("AchievementDetailScreen") {
             val achievement = achievementsNavVM.selectedAchievement.collectAsState().value
@@ -638,11 +640,21 @@ fun AppNavGraph(navController: NavHostController) {
                 )
             }
         }
+        defaultComposable("SocialMediaScreen") {
+            SocialMediaScreen(
+                onBackClick = { navController.navigate("AdminMainScreen") },
+                onEditClick = {},
+                socialViewModel = socialViewModel
+            )
+        }
 
         defaultComposable("AdminSocialMediaScreen") {
             AdminSocialMedia(
                 onBackClick = { navController.navigate("AdminMainScreen") },
-                onEditClick = {}
+                onEditClick = {
+                    navController.navigate("EditSocialMediaScreen")
+                },
+                socialViewModel = socialViewModel
             )
         }
 
@@ -878,6 +890,31 @@ fun AppNavGraph(navController: NavHostController) {
                 onBackClick = {
                     navController.popBackStack()
                 }
+            )
+        }
+        defaultComposable("EditSocialMediaScreen"){
+            EditSocialMedia(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onSaveClick = {
+                    socialViewModel.updateAllSocialLinks(
+                        instagram=it.instagram,
+                        youtube = it.youtube,
+                        linkedin = it.linkedin,
+                        mail= it.mail,
+                        onResult = {success->
+                            if(success){
+                                Toast.makeText(navController.context, "Updated", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                            else{
+                                Toast.makeText(navController.context, "Failed", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    )
+                } ,
+                socialViewModel = socialViewModel
             )
         }
     }

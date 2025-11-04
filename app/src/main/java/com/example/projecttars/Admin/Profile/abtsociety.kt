@@ -47,7 +47,7 @@ fun AboutSocietyScreen(
         val screenWidth = maxWidth
         val isLargeScreen = screenWidth > 600.dp
 
-        val logoSize = if (isLargeScreen) 160.dp else 120.dp
+        val logoSize = if (isLargeScreen) 170.dp else 130.dp
         val horizontalPadding = if (isLargeScreen) 32.dp else 16.dp
         val titleFontSize = if (isLargeScreen) 26.sp else 22.sp
         val subtitleFontSize = if (isLargeScreen) 18.sp else 16.sp
@@ -166,9 +166,9 @@ fun InfoCard(
             .background(background, RoundedCornerShape(12.dp))
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
-        InfoRow(label = "Founded", value = "2018", color = accentBlue, fontSize = fontSize)
+        InfoRow(label = "Founded", value = "2015", color = accentBlue, fontSize = fontSize)
         InfoRow(label = "Members", value = "30+", color = accentOrange, fontSize = fontSize)
-        InfoRow(label = "Domains", value = "AI/Ml • Robotics • IoT • VLSI/Embedded Systems ", color = accentPurple, fontSize = fontSize)
+        InfoRow(label = "Domains", value = "AI/Ml • Robotics • IoT • VLSI/Embedded Systems • Graphics • Marketing ", color = accentPurple, fontSize = fontSize)
     }
 }
 

@@ -25,6 +25,7 @@ import coil.compose.AsyncImage
 import com.example.projecttars.DataModels.OngoingProjectDetail
 import com.example.projecttars.Members.Projects.Completed.CardSection
 import com.example.projecttars.R
+import com.example.projecttars.Utils.isLink
 import com.example.projecttars.ui.theme.*
 
 @Composable
@@ -123,25 +124,27 @@ fun OngoingProjectDetailScreen(
             Spacer(modifier = Modifier.height(spacerHeight))
 
             project.youtubeUrl?.let { url ->
-                Button(
-                    onClick = { uriHandler.openUri(url) },
-                    colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = horizontalPadding),
-                    shape = RoundedCornerShape(cardCornerRadius)
-                ) {
-                    Icon(
-                        Icons.Default.PlayArrow,
-                        contentDescription = "YouTube",
-                        tint = TextPrimary
-                    )
-                    Spacer(modifier = Modifier.width(horizontalPadding / 2))
-                    Text(
-                        text = "Watch Demo",
-                        color = TextPrimary,
-                        fontFamily = FontFamily(Font(R.font.poppinsregular))
-                    )
+                if(isLink(project.youtubeUrl)){
+                    Button(
+                        onClick = { uriHandler.openUri(url) },
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = horizontalPadding),
+                        shape = RoundedCornerShape(cardCornerRadius)
+                    ) {
+                        Icon(
+                            Icons.Default.PlayArrow,
+                            contentDescription = "YouTube",
+                            tint = TextPrimary
+                        )
+                        Spacer(modifier = Modifier.width(horizontalPadding / 2))
+                        Text(
+                            text = "Watch Demo",
+                            color = TextPrimary,
+                            fontFamily = FontFamily(Font(R.font.poppinsregular))
+                        )
+                    }
                 }
             }
 

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.projecttars.DataModels.CompletedProjectDetail
 import com.example.projecttars.R
+import com.example.projecttars.Utils.isLink
 import com.example.projecttars.ui.theme.*
 
 @Composable
@@ -124,21 +125,23 @@ fun CompletedProjectDetailScreen(
             Spacer(modifier = Modifier.height(spacerHeight1))
 
             project.youtubeUrl?.let { url ->
-                Button(
-                    onClick = { uriHandler.openUri(url) },
-                    colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = horizontalPadding),
-                    shape = RoundedCornerShape(buttonCorner)
-                ) {
-                    Icon(Icons.Default.PlayArrow, contentDescription = "YouTube", tint = TextPrimary)
-                    Spacer(modifier = Modifier.width(horizontalPadding / 2))
-                    Text(
-                        text = "Watch Demo",
-                        color = TextPrimary,
-                        fontFamily = FontFamily(Font(R.font.poppinsregular))
-                    )
+                if(isLink(project.youtubeUrl)){
+                    Button(
+                        onClick = { uriHandler.openUri(url) },
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = horizontalPadding),
+                        shape = RoundedCornerShape(buttonCorner)
+                    ) {
+                        Icon(Icons.Default.PlayArrow, contentDescription = "YouTube", tint = TextPrimary)
+                        Spacer(modifier = Modifier.width(horizontalPadding / 2))
+                        Text(
+                            text = "Watch Demo",
+                            color = TextPrimary,
+                            fontFamily = FontFamily(Font(R.font.poppinsregular))
+                        )
+                    }
                 }
             }
 

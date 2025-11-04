@@ -6,6 +6,6 @@ data class TarsLabComponent(
     var imageUrl: String = "",
     var description: String = "",
     var available: Boolean = false,
-    var youtubeUrl: String? = null,
+    var youtubeUrl: String? = "",
     var documentationUrl: String? = null
 )

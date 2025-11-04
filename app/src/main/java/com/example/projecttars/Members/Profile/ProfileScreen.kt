@@ -20,195 +20,176 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.coerceIn
 import coil.compose.AsyncImage
-import com.example.projecttars.Admin.Profile.ActionCardMinimal
+import com.example.projecttars.Admin.Profile.ModernActionCard
 import com.example.projecttars.R
 import com.example.projecttars.ui.theme.*
 
 @Composable
 fun ProfileScreen(
     imageUrl: String,
-    username: String ,
-    email: String ,
+    username: String,
+    email: String,
     onLogoutClick: () -> Unit = {},
-    onNotificationsClick: () -> Unit = {},
-    onAboutSocietyClick: () -> Unit = {}
+    onNotificationsViewClick: () -> Unit = {},
+    onAboutSocietyClick: () -> Unit = {},
+
 ) {
-    val gradientColorsHeader = listOf(DarkGrayBlue, AccentBlue.copy(alpha = 0.5f), DarkSlate)
-    val gradientColorsCard = listOf(DarkGrayBlue, DarkSlate)
+    val bgGradient = Brush.verticalGradient(
+        listOf(DarkGrayBlue, DarkSlate, Color.Black)
+    )
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val screenWidth = maxWidth.value
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(bgGradient)
+    ) {
+        val screenWidth = maxWidth
+        val screenHeight = maxHeight
 
 
-        // Dynamic sizes
-
-        val fontUsername = (screenWidth * 0.06f).sp
-        val fontEmail = (screenWidth * 0.035f).sp
-        val headerHeight = (screenWidth * 0.6f).dp
-        val profileImageSize = (screenWidth * 0.38f).dp
-        val spacerSmall = (screenWidth * 0.02f).dp
-        val spacerMedium = (screenWidth * 0.04f).dp
-        val actionCardHeight = (screenWidth * 0.15f).dp
-        val actionCardCorner = (screenWidth * 0.04f).dp
-        val iconSize = (screenWidth * 0.08f).dp
-        val textSizeAction = (screenWidth * 0.045f).sp
-        val actionCardPadding = (screenWidth * 0.04f).dp
-        val iconTextSpacing = (screenWidth * 0.03f).dp
-
-        Column(
+        val profileSize = (screenWidth * 0.28f).coerceIn(90.dp, 140.dp)
+        val horizontalPadding = (screenWidth * 0.06f).coerceIn(16.dp, 24.dp)
+        val nameFontSize = if (screenWidth < 380.dp) 18.sp else 22.sp
+        val emailFontSize = if (screenWidth < 380.dp) 12.sp else 14.sp
+        val titleFontSize = if (screenWidth < 400.dp) 16.sp else 18.sp
+        val cardSpacing = if (screenHeight < 650.dp) 10.dp else 14.dp
+        var showDeleteDialog by remember { mutableStateOf(false) }
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(DarkCharcoal)
+                .padding(horizontal = horizontalPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(bottom = 40.dp)
         ) {
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(headerHeight)
-                    .background(Brush.verticalGradient(colors = gradientColorsHeader)),
-                contentAlignment = Alignment.Center
-            ) {
-                val imageModifier = Modifier
-                    .size(profileImageSize)
-                    .clip(CircleShape)
-
-                if (imageUrl.isNotEmpty()) {
-                    AsyncImage(
-                        model = imageUrl,
-                        contentDescription = "Profile Image",
-                        modifier = imageModifier,
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(id = R.drawable.tarsapplogo_foreground),
-                        contentDescription = "Profile Image",
-                        modifier = imageModifier,
-                        contentScale = ContentScale.Crop
-                    )
+            item {
+                Spacer(modifier = Modifier.height(screenHeight * 0.08f))
+                Box(
+                    modifier = Modifier
+                        .size(profileSize)
+                        .clip(CircleShape)
+                        .background(Color.Black.copy(alpha = 0.2f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (imageUrl.isNotEmpty()) {
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = "Profile Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.tarsapplogo_foreground),
+                            contentDescription = "Profile Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
-            }
 
-
-            Spacer(modifier = Modifier.height(spacerSmall))
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = username,
-                    fontSize = fontUsername,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = nameFontSize,
                     color = AccentBlue,
+                    fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily(Font(R.font.poppinsmedium))
                 )
-                Spacer(modifier = Modifier.height(spacerSmall / 2))
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = email,
-                    fontSize = fontEmail,
-                    color = Color.White,
+                    fontSize = emailFontSize,
+                    color = Color.LightGray,
                     fontFamily = FontFamily(Font(R.font.poppinsregular))
+                )
+                Spacer(modifier = Modifier.height(28.dp))
+            }
+
+
+            item {
+                Text(
+                    text = "Member Profile",
+                    fontSize = titleFontSize,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = FontFamily(Font(R.font.poppinssemibold)),
+                    color = AccentOrange,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(bottom = 16.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.height(spacerMedium))
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = actionCardPadding),
-                verticalArrangement = Arrangement.spacedBy(spacerMedium),
-                contentPadding = PaddingValues(bottom = spacerMedium)
-            ) {
 
-                item {
-                    ActionCardMinimal(
-                        "View Notifications",
-                        Icons.Default.Notifications,
-                        gradientColorsCard,
-                        actionCardHeight,
-                        actionCardCorner,
-                        iconSize,
-                        textSizeAction,
-                        iconTextSpacing,
-                        onNotificationsClick
-                    )
-                }
-                item {
-                    ActionCardMinimal(
-                        "About Society",
-                        Icons.Default.Info,
-                        listOf(DarkSlate, DarkGrayBlue),
-                        actionCardHeight,
-                        actionCardCorner,
-                        iconSize,
-                        textSizeAction,
-                        iconTextSpacing,
-                        onAboutSocietyClick
-                    )
-                }
-                item {
-                    ActionCardMinimal(
-                        "Logout",
-                        Icons.Default.ExitToApp,
-                        listOf(DarkSlate, DarkGrayBlue),
-                        actionCardHeight,
-                        actionCardCorner,
-                        iconSize,
-                        textSizeAction,
-                        iconTextSpacing,
-                        onLogoutClick
-                    )
-                }
+            item {
+                ModernActionCard(
+                    title = "View Notifications",
+                    icon = Icons.Default.Notifications,
+                    accentColor = AccentBlue,
+                    onClick = onNotificationsViewClick
+                )
+                Spacer(modifier = Modifier.height(cardSpacing))
+
+                ModernActionCard(
+                    title = "About Society",
+                    icon = Icons.Default.Info,
+                    accentColor = Color(0xFF64B5F6),
+                    onClick = onAboutSocietyClick
+                )
+
+                Spacer(modifier = Modifier.height(cardSpacing))
+
+                ModernActionCard(
+                    title = "Logout",
+                    icon = Icons.Default.ExitToApp,
+                    accentColor = Color(0xFFFF5252),
+                    onClick = {
+                        showDeleteDialog=true
+                    }
+                )
             }
         }
-    }
-}
-
-@Composable
-fun ActionCardMinimal(
-    text: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    gradientColors: List<Color>,
-    onClick: () -> Unit,
-    cardHeight: Dp,
-    iconSize: Dp,
-    fontSize: TextUnit,
-    spacerWidth: Dp
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(cardHeight)
-            .clip(RoundedCornerShape(cardHeight / 3))
-            .background(Brush.horizontalGradient(gradientColors))
-            .clickable { onClick() }
-            .padding(horizontal = cardHeight / 4),
-        contentAlignment = Alignment.CenterStart
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = text,
-                tint = AccentOrange,
-                modifier = Modifier.size(iconSize)
-            )
-            Spacer(modifier = Modifier.width(spacerWidth))
-            Text(
-                text = text,
-                fontSize = fontSize,
-                fontFamily = FontFamily(Font(R.font.poppinsmedium)),
-                color = Color.White
+        if (showDeleteDialog) {
+            AlertDialog(
+                icon = {
+                    Icon(
+                        Icons.Default.Logout,
+                        contentDescription = "Logout",
+                        tint = Color.Red,
+                    )
+                },
+                onDismissRequest = { showDeleteDialog = false },
+                title = { Text("Logout", color = TextPrimary,fontSize = 17.sp,
+                    fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
+                text = { Text("Are you sure you want to Logout ?", color = TextSecondary,       fontSize = 12.sp,
+                    fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            onLogoutClick.invoke()
+                            showDeleteDialog = false
+                        }
+                    ) {
+                        Text("Confirm", color =Color.White,fontSize = 12.sp,
+                            fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium)))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteDialog = false }) {
+                        Text("Cancel", color = TextPrimary, fontSize = 12.sp,
+                            fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium)))
+                    }
+                },
+                containerColor = DarkGrayBlue
             )
         }
     }

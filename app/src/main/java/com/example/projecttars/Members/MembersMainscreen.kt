@@ -93,7 +93,7 @@ fun MainScreen(navController: NavHostController, resourcesVM: ResourcesVM, resou
                     resourcesNavVM = resourcesNavVM
                 )
                 "profile" -> ProfileScreen (
-                    onNotificationsClick = {
+                    onNotificationsViewClick = {
                         navController.navigate("NotificationScreen")
                     },
                     onAboutSocietyClick = {

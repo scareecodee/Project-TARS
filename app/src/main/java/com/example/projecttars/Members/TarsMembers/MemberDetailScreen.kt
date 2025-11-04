@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.projecttars.DataModels.MemberDetail
 import com.example.projecttars.R
+import com.example.projecttars.Utils.isLink
 import com.example.projecttars.ui.theme.*
 
 @Composable
@@ -72,7 +73,7 @@ fun MemberDetailScreen(
                         Icon(
                             Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = TextPrimary,
+                            tint = AccentBlue,
                             modifier = Modifier.size(iconSize)
                         )
                     }
@@ -106,7 +107,7 @@ fun MemberDetailScreen(
                 elevation = CardDefaults.cardElevation((screenHeight * 0.015f).dp)
             ) {
                 AsyncImage(
-                    model = if (member.imageUrl.isEmpty()) R.drawable.tarsapplogo_foreground else member.imageUrl,
+                    model = member.imageUrl.ifEmpty { R.drawable.tarsapplogo_foreground },
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -115,24 +116,28 @@ fun MemberDetailScreen(
 
             Spacer(modifier = Modifier.height(verticalPadding))
 
+
             member.linkedinUrl?.let { url ->
-                Button(
-                    onClick = { uriHandler.openUri(url) },
-                    colors = ButtonDefaults.buttonColors(containerColor = AccentBlue),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = horizontalPadding)
-                        .height((screenHeight * 0.065f).dp),
-                    shape = RoundedCornerShape(cardCornerRadius)
-                ) {
-                    Icon(Icons.Default.Link, contentDescription = "LinkedIn", tint = TextPrimary, modifier = Modifier.size(iconSize))
-                    Spacer(modifier = Modifier.width(rowSpacing))
-                    Text(
-                        "LinkedIn Profile",
-                        color = TextPrimary,
-                        fontFamily = FontFamily(Font(R.font.poppinsregular)),
-                        fontSize = sectionContentFont
-                    )
+                if(isLink(url)){
+                    Button(
+                        onClick = { uriHandler.openUri(url)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentBlue),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = horizontalPadding)
+                            .height((screenHeight * 0.065f).dp),
+                        shape = RoundedCornerShape(cardCornerRadius)
+                    ) {
+                        Icon(Icons.Default.Link, contentDescription = "LinkedIn", tint = TextPrimary, modifier = Modifier.size(iconSize))
+                        Spacer(modifier = Modifier.width(rowSpacing))
+                        Text(
+                            "LinkedIn Profile",
+                            color = TextPrimary,
+                            fontFamily = FontFamily(Font(R.font.poppinsregular)),
+                            fontSize = sectionContentFont
+                        )
+                    }
                 }
             }
 

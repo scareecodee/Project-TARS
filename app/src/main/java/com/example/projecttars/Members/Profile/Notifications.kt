@@ -79,7 +79,7 @@ fun NotificationScreen(
                     text = "Notifications",
                     color = AccentBlue,
                     fontSize = (screenWidth * 0.07).sp,
-                    fontFamily = FontFamily(Font(R.font.poppinsregular))
+                    fontFamily = FontFamily(Font(R.font.poppinsbold))
                 )
             }
 
@@ -224,7 +224,7 @@ fun NotificationCard(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Admin", color = TextPrimary,fontSize = 17.sp,
+            title = { Text("Delete ${notificationItem.title}", color = TextPrimary,fontSize = 17.sp,
                 fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
             text = { Text("Are you sure you want to delete ${notificationItem.title}?", color = TextSecondary,       fontSize = 12.sp,
                 fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
