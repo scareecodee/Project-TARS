@@ -255,7 +255,7 @@ fun OngoingProjectDetailScreen(
         if (showDeleteDialog) {
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
-                title = { Text("Delete Admin", color = TextPrimary,fontSize = 17.sp,
+                title = { Text("Delete ${project.name}", color = TextPrimary,fontSize = 17.sp,
                     fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },
                 text = { Text("Are you sure you want to delete ?", color = TextSecondary,       fontSize = 12.sp,
                     fontFamily = FontFamily(androidx.compose.ui.text.font.Font(R.font.poppinsmedium))) },

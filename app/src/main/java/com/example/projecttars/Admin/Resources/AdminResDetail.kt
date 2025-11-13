@@ -121,7 +121,7 @@ fun AdminResDetailScreen(
                 elevation = CardDefaults.cardElevation(12.dp)
             ) {
                 AsyncImage(
-                    model = equipment.imageUrl,
+                    model = equipment.imageUrl.ifEmpty { R.drawable.tarsapplogo_foreground },
                     contentDescription = equipment.name,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop

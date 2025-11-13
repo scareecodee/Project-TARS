@@ -35,13 +35,13 @@ fun AdminResScreen(
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
 
-    // Responsive values
+
     val horizontalPadding = (screenWidth * 0.04).dp
-    val verticalPadding = (screenHeight * 0.02).dp
+    val verticalPadding = (screenHeight * 0.025).dp
     val headingFontSize = (screenWidth * 0.07).sp
     val spacerSmall = (screenHeight * 0.015).dp
     val gridSpacing = (screenWidth * 0.04).dp
-    val bottomPadding = (screenHeight * 0.06).dp
+    val bottomPadding = (screenHeight * 0.11).dp
 
     val equipments by resourcesVM.equipments.collectAsState()
 
